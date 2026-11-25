@@ -8,6 +8,7 @@
 //   - shapes stacked on the same cell, or spilling out of their container
 
 import { parseDrawioFile } from './drawio-file.mjs';
+import { estimateTextWidth, htmlToText, wrapText } from './text-metrics.mjs';
 
 const SWIMLANE = 'swimlane';
 const CONTAINER = 'container';
@@ -101,6 +102,66 @@ function isContainer(cell) {
   if (!cell.vertex) return false;
   const style = cell.styleMap;
   return SWIMLANE in style || style[CONTAINER] === '1' || cell.style.trim() === 'group' || cell.style.includes('group;');
+}
+
+// Labels are laid out inside a shape, not in the full geometry box. These
+// factors are deliberately conservative: a warning should send the author to
+// check the render, not pretend to be pixel-perfect browser metrics.
+function labelBox(cell) {
+  const style = cell.styleMap;
+  if (!cell.value || cell.width <= 0 || cell.height <= 0) return null;
+  if (style.text === '1' || cell.style.trim() === 'text') return null;
+  if (isContainer(cell) || style.shape === 'table') return null;
+  if (style.shape === 'umlLifeline' || style.perimeter === 'lifelinePerimeter') return null;
+  if (style.verticalLabelPosition === 'bottom' || style.verticalLabelPosition === 'top') return null;
+
+  const shape = String(style.shape ?? '');
+  let factor = 1;
+  if (style.rhombus === '1' || shape === 'rhombus') factor = 0.62;
+  else if (style.ellipse === '1' || shape === 'ellipse') factor = 0.72;
+  else if (shape.includes('cylinder')) factor = 0.82;
+  else if (/^(hexagon|triangle|parallelogram|trapezoid|step|process|manualInput|delay|display|loopLimit|dataStorage|internalStorage|offPageConnector|or|card|tape|note|callout|cube|cloud|document|singleArrow|doubleArrow|flexArrow|component|umlBoundary|umlControl|umlEntity)$/.test(shape)) factor = 0.8;
+
+  const spacing = num(style.spacing, 2);
+  const left = num(style.spacingLeft, spacing);
+  const right = num(style.spacingRight, spacing);
+  const top = num(style.spacingTop, spacing);
+  const bottom = num(style.spacingBottom, spacing);
+  return {
+    width: cell.width * factor - left - right,
+    height: cell.height * factor - top - bottom,
+    fontSize: num(style.fontSize, 12),
+    bold: (Number.parseInt(style.fontStyle, 10) & 1) === 1,
+    wrap: style.whiteSpace === 'wrap'
+  };
+}
+
+function labelOverflow(cell) {
+  const box = labelBox(cell);
+  if (!box || box.width <= 0 || box.height <= 0 || box.fontSize <= 0) return null;
+  const text = htmlToText(cell.value);
+  if (!text) return null;
+  // Inline metadata is often set to 9–10px inside a 12px label. Measuring all
+  // text at the base size produces false positives; use the smallest explicit
+  // font size as a conservative hint for the whole label.
+  const inlineSizes = [...String(cell.value).matchAll(/font-size\s*:\s*([\d.]+)px/gi)]
+    .map((match) => Number.parseFloat(match[1]))
+    .filter((size) => Number.isFinite(size) && size > 0);
+  const fontSize = inlineSizes.length ? Math.min(box.fontSize, ...inlineSizes) : box.fontSize;
+  const lines = box.wrap
+    ? wrapText(text, box.width, fontSize, { bold: box.bold })
+    : text.split('\n');
+  const lineHeight = Math.ceil(fontSize * 1.2);
+  const neededWidth = Math.max(...lines.map((line) => estimateTextWidth(line, fontSize, { bold: box.bold })), 0);
+  const neededHeight = lines.length * lineHeight;
+  if (neededWidth <= box.width + 2 && neededHeight <= box.height + 2) return null;
+  return {
+    neededWidth,
+    neededHeight,
+    availableWidth: Math.round(box.width),
+    availableHeight: Math.round(box.height),
+    lines: lines.length
+  };
 }
 
 // Edges are routed in page coordinates. Child cells and waypoints may be
@@ -345,6 +406,10 @@ export function lintModel(model, options = {}) {
     }
     if (/\\n/.test(cell.value)) {
       add('STYLE002', 'warn', 'label contains a literal \\n; use &#xa; or <br> instead', cell.id);
+    }
+    const overflow = labelOverflow(cell);
+    if (overflow) {
+      add('TEXT001', 'warn', `label likely overflows ${cell.width}×${cell.height}: needs about ${overflow.neededWidth}×${overflow.neededHeight} in ${overflow.availableWidth}×${overflow.availableHeight} (${overflow.lines} line(s)); add <br>, widen the shape, or reduce fontSize`, cell.id);
     }
     if (cell.parent && cell.parent !== '0' && !layerIds.has(cell.parent)) {
       const parent = index.get(cell.parent);

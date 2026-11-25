@@ -63,7 +63,7 @@ description: 通过 draw.io MCP 生成、修改和校验 .drawio 图：open_draw
 3. **一条边必须有 `<mxGeometry relative="1" as="geometry"/>`**，且不能用自闭合 `<mxCell .../>` 表示边。
 4. **边挂在最内层公共容器上**；两端不在同一容器时 `parent="1"`。挂错帧会被布局引擎画歪。
 5. **容器子元素坐标是相对容器的**；swimlane 的 `startSize` 是标题区，子元素必须让开。
-6. **`html=1` 与转义同时成立**：label 里有 `<b>`/`<br>` 时必须 `html=1`，且 XML 里写成 `&lt;b&gt;`；换行用 `<br>` 或 `&#xa;`，禁止字面 `\n`。
+6. **标签先适配，再定宽高**：`html=1` 与转义同时成立；label 里有 `<b>`/`<br>` 时必须 `html=1`，XML 里写成 `&lt;b&gt;`；换行用 `<br>` 或 `&#xa;`，禁止字面 `\n`。图形宽高是硬边界：中文约 1em、英文约 0.55em，行高约 1.2×fontSize；超宽先用 `<br>` 主动断行，或增大宽高、降低 fontSize。不能只开 `whiteSpace=wrap` 就假设文字会自己缩进去；`TEXT001` 报告必须修。
 7. **禁止 XML 注释**。draw.io 解析器不接受，且白白消耗 token。
 8. **id 唯一且稳定**。改图沿用旧 id；新建用 `n1/d1/e1` 这类可读 id，不用随机串。
 9. **一页一个主题**。同文件多页共享版本历史；页面名不带 `/`（会被规范化）。
@@ -103,7 +103,7 @@ description: 通过 draw.io MCP 生成、修改和校验 .drawio 图：open_draw
 node scripts/validate-drawio.mjs --strict path/to/file.drawio
 ```
 
-零 error 且零 warning 才继续。警告也要看：`LAYOUT001`（重叠）、`LAYOUT002`（越界）、`EDGE004`（边挂错帧）、`EDGE005`（共享段/原路折返）、`EDGE006`（穿框）都是真实视觉缺陷。
+零 error 且零 warning 才继续。警告也要看：`LAYOUT001`（重叠）、`LAYOUT002`（越界）、`EDGE004`（边挂错帧）、`EDGE005`（共享段/原路折返）、`EDGE006`（穿框）、`TEXT001`（标签溢出）都是真实视觉缺陷。
 
 校验器与 `scripts/lib/` 随技能安装，不需要仓库根目录。若当前工作目录不是技能根目录，直接用绝对路径：
 
@@ -146,6 +146,7 @@ set_page(path, page, 新 model) → 复读 get_page 确认
 | 浏览器里空白/报错，但工具返回了 URL | `open_drawio_xml` 不校验 XML | 本地 lint；检查根节点是不是单个 `mxGraphModel` |
 | 边不显示 | 边缺 `<mxGeometry relative="1"/>` 或被写成自闭合 | 补 geometry，展开成开闭标签 |
 | 标签显示成 `<b>xxx</b>` | 有 HTML 但缺 `html=1`，或没转义 | 加 `html=1`，把 `<` 写成 `&lt;` |
+| 文字溢出/被边框裁掉 | 框宽高固定但标签未断行，或只开了 `whiteSpace=wrap` | 加 `<br>` 主动断行；用 `fitLabel` 重算宽高；跑 lint 看 `TEXT001` |
 | 文字里出现 `\n` | 用了字面反斜杠 n | 改 `<br>` 或 `&#xa;` |
 | 新节点压在一起 | 两个节点放了同一个网格单元 | 一节点一单元；跑 lint 看 `LAYOUT001` |
 | 子元素跑出泳道/容器 | 坐标当成了绝对坐标，或没让开 `startSize` | 相对父容器定位；`horizontal=0` 时 x ≥ startSize |
@@ -163,6 +164,7 @@ set_page(path, page, 新 model) → 复读 get_page 确认
 - [ ] 每条边都有 source/target 与 `relative="1"` 的 geometry
 - [ ] 边挂在最内层公共容器上
 - [ ] 没有 `EDGE005`（共享段/折返）与 `EDGE006`（穿框）
+- [ ] 长标签已用 `<br>` 断行或放大形状，`TEXT001` 零告警
 - [ ] 容器子元素坐标相对父级，且让开 `startSize`
 - [ ] 没有重叠节点、零尺寸节点、负尺寸
 - [ ] 含 HTML 的 label 都有 `html=1` 且已转义
@@ -176,6 +178,7 @@ set_page(path, page, 新 model) → 复读 get_page 确认
 - `references/xml-cookbook.md`：形状、容器、泳道、表格布局、ER 实体、层、标签、主题的可复制 XML
 - `references/sequences.md`：XML 时序图的生命线、消息锚点、分支与自检
 - `references/shape-libraries.md`：九组元素的选择、Tier A/B/C、离线降级、上下文映射
+- `scripts/lib/text-metrics.mjs`：`estimateTextWidth` / `wrapText` / `fitLabel`，写 XML 前先把标签放进框内
 - `references/scenarios.md`：68 个软件工程场景 × 图种 × 元素 × 验收，附真实项目图集工作流
 - `references/mermaid.md`：28 种图的选择、ELK 触发条件、样式与降级
 - `references/validation.md`：lint 规则、几何算法、预览与导出验收

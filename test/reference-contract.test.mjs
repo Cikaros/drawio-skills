@@ -73,6 +73,7 @@ test('SKILL.md points at the selection references', () => {
   assert.ok(text.includes('examples/06-shape-smoke-test.drawio'));
   assert.ok(text.includes('EDGE005'));
   assert.ok(text.includes('EDGE006'));
+  assert.ok(text.includes('TEXT001'));
 });
 
 test('sequence reference keeps the anchoring rules', () => {

@@ -32,6 +32,7 @@ $required = @(
   "README.md", "package.json", "skills\drawio-mcp\SKILL.md",
   "skills\drawio-mcp\scripts\validate-drawio.mjs",
   "skills\drawio-mcp\scripts\lib\drawio-lint.mjs",
+  "skills\drawio-mcp\scripts\lib\text-metrics.mjs",
   "shared\drawio-lint.mjs", "scripts\validate-drawio.mjs",
   "examples\01-approval-flow.drawio", "verification\compatibility.md"
 )

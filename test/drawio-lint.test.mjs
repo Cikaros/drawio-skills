@@ -27,6 +27,15 @@ test('a clean diagram produces no issues', () => {
   assert.deepEqual(issues, []);
 });
 
+test('a label that cannot fit its shape is reported', () => {
+  const body = '<mxCell id="a" value="这是一个非常长的中文标签用于测试换行" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="40" y="40" width="100" height="40" as="geometry"/></mxCell>';
+  const issues = lintModelXml(body);
+  assert.ok(issues.some((issue) => issue.code === 'TEXT001' && issue.cellId === 'a'));
+
+  const clean = '<mxCell id="b" value="第一行<br>第二行" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="160" y="40" width="140" height="60" as="geometry"/></mxCell>';
+  assert.equal(lintModelXml(clean).filter((issue) => issue.code === 'TEXT001').length, 0);
+});
+
 test('html in a label without html=1 is an error, because tags render literally', () => {
   const issues = lintModelXml('<mxCell id="a" value="&lt;b&gt;Bold&lt;/b&gt;" style="rounded=1;" vertex="1" parent="1"><mxGeometry x="40" y="40" width="140" height="60" as="geometry"/></mxCell>');
   assert.ok(issues.some((issue) => issue.code === 'STYLE001' && issue.severity === 'error'));

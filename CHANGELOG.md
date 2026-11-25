@@ -2,6 +2,25 @@
 
 遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与语义化版本。
 
+## [0.5.0] - 2026-11-25
+
+### Added
+
+- `TEXT001`：按图形可用宽高、字体大小和换行估算标签是否溢出；覆盖中文/拉丁宽度、显式 `<br>`、`whiteSpace=wrap`、菱形/椭圆等内框系数，内联 `font-size` 作为保守提示。
+- `scripts/lib/text-metrics.mjs`：`estimateTextWidth` / `wrapText` / `fitLabel`，写 XML 前返回已断行转义的 `value` 与建议 `width`/`height`。
+
+### Changed
+
+- `SKILL.md`、`references/validation.md`、`references/xml-cookbook.md` 增加“标签先适配、再定宽高”的公式与 `fitLabel` 用法。
+- `docs/diagram/{typography-color,layout,review-checklist}.md` 与案例 04 增加文本溢出验收项。
+- `examples/06-shape-smoke-test.drawio`：拆分过长的 shape 说明，降低一处内联字号，`TEXT001` 归零。
+- 安装脚本/doctor/技能包测试把 `text-metrics.mjs` 纳入必备依赖。
+
+### Validated
+
+- 8 个示例 `--strict` 零告警；NetBird 17 页仍为 0 error / 0 warning。
+- `npm run verify`：50/50 通过。
+
 ## [0.4.2] - 2026-11-25
 
 ### Fixed

@@ -18,6 +18,16 @@
 - 一页最多三个字号层级。
 - 中文用系统字体（`Helvetica`/`Microsoft YaHei` 回退）；英文可用 `Inter`，但要带 `fontSource` 的编码 URL，离线环境会退化。
 
+### 1.1 标签适配
+
+字号确定后，标签必须落在框内，不能假设 `whiteSpace=wrap` 会自动缩小文字：
+
+- 可用宽 = `width - spacingLeft - spacingRight`；可用高同理；12px、`spacing=2` 的 140×60 框只有约 136×56。
+- 中文≈1em/字，英文≈0.55em/字；行高≈1.2×fontSize。10 个汉字在 12px 下约 120px。
+- 超宽先按语义用 `<br>` 断行，再调整高度；不要靠缩到 9px 以下硬塞。
+- 菱形/椭圆/六边形/圆柱内框更小，额外留 15–30% 余量。
+- 生成脚本用 `scripts/lib/text-metrics.mjs` 的 `fitLabel()` 同步得到 `value`（含 `<br>`）和宽高；lint 用 `TEXT001` 检查估算溢出。
+
 ## 2. 颜色角色
 
 | 角色 | fill | stroke | 用途 |

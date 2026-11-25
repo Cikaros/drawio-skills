@@ -26,6 +26,7 @@ $required = @(
   'scripts/validate-drawio.mjs',
   'scripts/lib/drawio-lint.mjs',
   'scripts/lib/drawio-file.mjs',
+  'scripts/lib/text-metrics.mjs',
   'scripts/lib/xml-parse.mjs'
 )
 foreach ($item in $required) {

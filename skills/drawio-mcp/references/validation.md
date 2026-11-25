@@ -44,13 +44,14 @@ draw.io MCP **不做校验**：`open_drawio_xml` 对畸形 XML 同样返回 URL�
 | `STYLE001` | error | 有 HTML 标签但没有 `html=1` | 加 `html=1` 或去掉标签 |
 | `STYLE002` | warn | 标签里有字面 `\n` | 改 `<br>` / `&#xa;` |
 | `STYLE010` | warn | 边标签没有背景色，线会穿过文字 | 加 `labelBackgroundColor=#FFFFFF` |
+| `TEXT001` | warn | 标签按框宽/行高估算放不下 | 用 `<br>` 主动断行、增大宽高或降低 fontSize |
 | `LAYOUT001` | warn | 同父级下两个图形重叠 | 换网格单元 |
 | `LAYOUT002` | warn | 子元素超出容器边界 | 缩小或移动 |
 | `LAYOUT003` | warn | 子元素压在容器标题区 | 让开 `startSize` |
 | `PAGE001` | error | 页 id 重复 | 改 id |
 | `PAGE002` | warn | 页名重复 | 改名 |
 
-警告不是"可忽略"：`LAYOUT001/002/003`、`EDGE004/005/006` 都是肉眼可见的缺陷。`EDGE005` 的对向共享段尤其危险：两条线完全重合时，读者只能看到一条线和一个反向箭头，数据流会读反。
+警告不是"可忽略"：`LAYOUT001/002/003`、`EDGE004/005/006`、`TEXT001` 都是肉眼可见的缺陷。`EDGE005` 的对向共享段尤其危险：两条线完全重合时，读者只能看到一条线和一个反向箭头，数据流会读反。
 
 ## 3. 几何规则（lint 实际在算什么）
 
@@ -61,6 +62,7 @@ draw.io MCP **不做校验**：`open_drawio_xml` 对畸形 XML 同样返回 URL�
 - **边路径**：先按 `exitX/exitY`、`entryX/entryY` 取真实出入点，再加 `<Array as="points">` 的 waypoint；没写锚点时从中心出发，并裁到源/目标边框。waypoint 在容器内时叠加容器绝对偏移。
 - **共享段**：两条边的同轴（水平/垂直）线段重叠 >12px → `EDGE005`；同一条边非相邻或相邻线段原路折返也算。消息里会标出 same/opposite directions。
 - **穿框**：边的任一线段穿过无关图形的内部 → `EDGE006`。只擦着边框走不算；`text` 分区标题、`shape=umlLifeline` 生命线、容器/泳道不作为障碍物，避免把时序消息穿越生命线误报为穿框。
+- **标签适配**：按 CJK≈1em、拉丁≈0.55em 估宽，行高≈1.2×fontSize；菱形/椭圆等形状再乘保守内框系数。`whiteSpace=wrap` 时按可用宽度试排，否则只认 `<br>`/换行；超出可用宽或高 → `TEXT001`。内联 `font-size` 会作为保守提示。
 - **可见性**：宽或高为 0 → 不可见；负值 → 非法。
 
 ## 4. 预览流程
@@ -114,6 +116,21 @@ draw.io -x -f svg --size page -o out.svg file.drawio
 **不要用“删掉所有 waypoint 让 draw.io 自动绕”当万能解**：默认正交路由不避障，删点后线往往直接穿框。正确顺序是：先给锚点，再给走廊 waypoint，最后导出复核。
 
 没有桌面版时不要假装导出成功；改用浏览器预览 + 明确声明“未做视觉确认”。
+
+### 5.2 文本适配
+
+`TEXT001` 是估算规则，不替代浏览器排版，但能在写 XML 阶段抓住“框太小、字太长”。计算方式：
+
+```text
+可用宽 = width - spacingLeft - spacingRight
+可用高 = height - spacingTop - spacingBottom
+所需行高 ≈ 1.2 × fontSize × 行数
+```
+
+- 中文每字≈1em，拉丁字符≈0.55em；12px 的 10 个汉字约 120px。
+- 先用 `<br>` 在语义边界断行，再决定 `height`；不要用自动缩小字号来救所有溢出。
+- 生成脚本用 `scripts/lib/text-metrics.mjs` 的 `fitLabel(text, {maxWidth, fontSize})`：返回 `value`（已含 `<br>`）、`width`、`height`，直接写进 `mxGeometry`。
+- 菱形、椭圆、六边形、圆柱等形状内框更小，留出额外余量；`TEXT001` 通过后仍要目检一次。
 
 ## 6. 人工看什么
 

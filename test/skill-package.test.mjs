@@ -15,6 +15,7 @@ test('installable skill is self-contained and its manifest covers the validator'
     'scripts/validate-drawio.mjs',
     'scripts/lib/drawio-lint.mjs',
     'scripts/lib/drawio-file.mjs',
+    'scripts/lib/text-metrics.mjs',
     'scripts/lib/xml-parse.mjs'
   ];
   const manifest = JSON.parse(fs.readFileSync(skillFile('manifest.json'), 'utf8'));

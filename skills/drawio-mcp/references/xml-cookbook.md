@@ -69,6 +69,26 @@
 </mxCell>
 ```
 
+### 3.1 标签适配
+
+宽高是硬边界，`whiteSpace=wrap` 不会自动缩小字号。先算再写：
+
+```text
+可用宽 = width - spacingLeft - spacingRight
+可用高 = height - spacingTop - spacingBottom
+中文≈1em，英文≈0.55em；行高≈1.2×fontSize
+```
+
+例如 140×60、`spacing=2` 的框只有约 136×56；12px 中文一行最多约 11 个字，超过就该用 `<br>` 断行或增高，而不是继续塞。生成脚本可直接用技能内的 `scripts/lib/text-metrics.mjs`：
+
+```js
+import { fitLabel } from './scripts/lib/text-metrics.mjs';
+const box = fitLabel('收集请求并校验签名，失败则返回', { maxWidth: 140, fontSize: 12 });
+// box.value 已含 <br> 与转义后的文字；box.width / box.height 写进 mxGeometry
+```
+
+长英文标识符或 URL 不能靠自动换行，必须在 `=`、`;`、`/` 等语义边界手动 `<br>`，或改字号/宽高。lint 的 `TEXT001` 会按估算宽度和行数报警；它通过后仍要看一次预览。
+
 其他语义形状：`shape=parallelogram`（输入输出）、`shape=hexagon`、`shape=cloud`、`shape=actor`（UML 用例）、`shape=umlLifeline`（时序图，优先用 Mermaid）、`shape=table`（见第 6 节）。
 
 ## 4. 边

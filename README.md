@@ -40,14 +40,14 @@ skills/
   drawio-mcp/                可直接安装的技能（安装后自包含）
     SKILL.md                 操作规范
     scripts/validate-drawio.mjs  自带校验器（--strict / --json）
-    scripts/lib/             XML 解析、mxfile/压缩页、lint 规则
+    scripts/lib/             XML 解析、mxfile/压缩页、lint 规则、文本度量
     references/              XML 速查、时序、Mermaid、CSV、形状库、场景矩阵、校验、配方
     manifest.json            文件清单与 SHA-256
 shared/
   drawio-guards.mjs          网格、角色色、标签、边模板
   xml-parse.mjs              兼容入口（re-export 技能内实现）
   drawio-file.mjs            兼容入口（mxfile、压缩页、多页读写）
-  drawio-lint.mjs            兼容入口（29 条渲染缺陷规则）
+  drawio-lint.mjs            兼容入口（30 条渲染缺陷规则）
 scripts/
   validate-drawio.mjs        仓库兼容入口（转发到技能内校验器）
   check-docs.mjs             链接、围栏、标题、frontmatter、示例

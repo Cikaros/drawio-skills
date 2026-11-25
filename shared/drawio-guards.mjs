@@ -3,6 +3,9 @@
 // to copy into an agent's scratch script.
 
 import { escapeXml } from './xml-parse.mjs';
+import { estimateTextWidth, fitLabel, wrapText } from '../skills/drawio-mcp/scripts/lib/text-metrics.mjs';
+
+export { estimateTextWidth, fitLabel, wrapText };
 
 export const GRID = Object.freeze({
   col: (index) => index * 180 + 40,
@@ -67,14 +70,6 @@ export function makeId(prefix, index) {
 
 export function collapseWhitespace(text) {
   return String(text ?? '').replace(/\s+/g, ' ').trim();
-}
-
-/** Rough text width estimate used to size boxes before the first render. */
-export function estimateTextWidth(text, fontSize = 12) {
-  const value = String(text ?? '');
-  let units = 0;
-  for (const char of value) units += /[\u4e00-\u9fff\u3040-\u30ff]/.test(char) ? 1 : 0.55;
-  return Math.ceil(units * fontSize);
 }
 
 /** Fit a box around a label: 24px padding, minimum sizes from the grid. */
