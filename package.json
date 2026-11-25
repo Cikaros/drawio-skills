@@ -1,0 +1,19 @@
+{
+  "name": "drawio-skills",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "draw.io MCP usage notes, diagram design specs, a dependency-free validator and installable skills.",
+  "scripts": {
+    "check": "node scripts/check-docs.mjs && node scripts/build-manifest.mjs --check",
+    "lint:examples": "node scripts/validate-drawio.mjs examples/*.drawio",
+    "test": "node --test",
+    "verify": "npm run check && npm run test",
+    "manifest": "node scripts/build-manifest.mjs",
+    "site": "node scripts/build-site.mjs --write",
+    "site:check": "node scripts/build-site.mjs --check"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

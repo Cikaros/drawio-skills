@@ -1,0 +1,36 @@
+{
+  "name": "drawio-mcp",
+  "version": "0.1.0",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "bytes": 10022,
+      "sha256": "fbfaaee2f3e7bd634621494635c24b5581a0bc1d4e3ce9ad8a0efed7f3f93ff1"
+    },
+    {
+      "path": "references/csv.md",
+      "bytes": 2100,
+      "sha256": "126f7092c13bf99407ff7ae17df32a27f3b824e55de63852d3bcb6bd1197d167"
+    },
+    {
+      "path": "references/mermaid.md",
+      "bytes": 5412,
+      "sha256": "878b725cd4c005afd98ac5f62040f37e952249b36c2800de748e2f80ad9f89a1"
+    },
+    {
+      "path": "references/recipes.md",
+      "bytes": 7063,
+      "sha256": "eb06c7a90ac43ee25bac6f754759e4184d165f709fd91c6fda198a734b155138"
+    },
+    {
+      "path": "references/validation.md",
+      "bytes": 5275,
+      "sha256": "1cc7994bd78ef70f848ed4c1412e7fc915cfe0cacd74a06e32fba1ef8af28d15"
+    },
+    {
+      "path": "references/xml-cookbook.md",
+      "bytes": 9832,
+      "sha256": "b16a38f51bf1131b623401929b7c269c9f82d0298ff464b63ad1ea9b78f3f423"
+    }
+  ]
+}

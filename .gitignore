@@ -1,0 +1,24 @@
+# OS
+Thumbs.db
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# Local scratch
+*.tmp
+*.log
+*.bak
+.probe/
+
+# Node tooling (validation scripts are dependency-free)
+node_modules/
+coverage/
+
+# Generated static site (built by CI, not committed)
+/site/
+
+# Python tooling (if added later)
+.venv/
+__pycache__/

@@ -1,0 +1,34 @@
+<mxfile host="app.diagrams.net" modified="2026-11-25T00:00:00.000Z" agent="drawio-skills" version="24.7.17">
+  <diagram id="order-er" name="订单 ER 模型">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="订单 ER 模型（主键 / 外键标在字段行内）" style="text;html=1;fontSize=18;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1B1F24;" vertex="1" parent="1">
+          <mxGeometry x="40" y="0" width="560" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="customer" value="&lt;b&gt;CUSTOMER&lt;/b&gt;&lt;hr&gt;id &lt;font color=&quot;#C9302C&quot;&gt;PK&lt;/font&gt;&lt;br&gt;name&lt;br&gt;email" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#EEF4FF;strokeColor=#9DB8F2;fontColor=#1B1F24;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="200" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="order" value="&lt;b&gt;ORDER&lt;/b&gt;&lt;hr&gt;id &lt;font color=&quot;#C9302C&quot;&gt;PK&lt;/font&gt;&lt;br&gt;customer_id &lt;font color=&quot;#5A626E&quot;&gt;FK&lt;/font&gt;&lt;br&gt;status&lt;br&gt;total_amount" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#EEF4FF;strokeColor=#9DB8F2;fontColor=#1B1F24;" vertex="1" parent="1">
+          <mxGeometry x="320" y="60" width="200" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="item" value="&lt;b&gt;ORDER_ITEM&lt;/b&gt;&lt;hr&gt;id &lt;font color=&quot;#C9302C&quot;&gt;PK&lt;/font&gt;&lt;br&gt;order_id &lt;font color=&quot;#5A626E&quot;&gt;FK&lt;/font&gt;&lt;br&gt;product_id &lt;font color=&quot;#5A626E&quot;&gt;FK&lt;/font&gt;&lt;br&gt;qty" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#EEF4FF;strokeColor=#9DB8F2;fontColor=#1B1F24;" vertex="1" parent="1">
+          <mxGeometry x="600" y="60" width="200" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="product" value="&lt;b&gt;PRODUCT&lt;/b&gt;&lt;hr&gt;id &lt;font color=&quot;#C9302C&quot;&gt;PK&lt;/font&gt;&lt;br&gt;name&lt;br&gt;price" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#F3EEFF;strokeColor=#B9A6F0;fontColor=#1B1F24;" vertex="1" parent="1">
+          <mxGeometry x="600" y="280" width="200" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel1" value="places" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERmandOne;endArrow=ERmany;strokeColor=#8A94A6;fontColor=#5A626E;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="customer" target="order">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel2" value="contains" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERmandOne;endArrow=ERmany;strokeColor=#8A94A6;fontColor=#5A626E;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="order" target="item">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel3" value="referenced by" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERmandOne;endArrow=ERmany;strokeColor=#8A94A6;fontColor=#5A626E;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="product" target="item">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
