@@ -71,7 +71,6 @@ draw.io 的侧边栏把上万个 stencil 分成九组：**通用、基本、箭�
 | 内部存储 | `shape=internalStorage;whiteSpace=wrap;html=1;` |
 | 离页连接 | `shape=offPageConnector;whiteSpace=wrap;html=1;` |
 | 或 | `shape=or;whiteSpace=wrap;html=1;` |
-| 汇合 | `shape=summingJunction;whiteSpace=wrap;html=1;` |
 | 卡片 | `shape=card;whiteSpace=wrap;html=1;` |
 | 磁带 | `shape=tape;whiteSpace=wrap;html=1;` |
 | 便签 | `shape=note;whiteSpace=wrap;html=1;size=14;` |
@@ -83,14 +82,15 @@ draw.io 的侧边栏把上万个 stencil 分成九组：**通用、基本、箭�
 | 单箭头 | `shape=singleArrow;whiteSpace=wrap;html=1;` |
 | 双箭头 | `shape=doubleArrow;whiteSpace=wrap;html=1;` |
 | 柔性箭头 | `shape=flexArrow;whiteSpace=wrap;html=1;` |
-| 链环 | `shape=link;whiteSpace=wrap;html=1;` |
 | UML 角色 | `shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;` |
 | UML 边界 | `shape=umlBoundary;whiteSpace=wrap;html=1;` |
 | UML 控制 | `shape=umlControl;whiteSpace=wrap;html=1;` |
 | UML 实体 | `shape=umlEntity;whiteSpace=wrap;html=1;` |
 | UML 组件 | `shape=component;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=36;` |
 
-**冒烟测试**：`examples/06-shape-smoke-test.drawio` 把上表排成网格。打开一次，凡是显示成矩形的就是名称无效（或当前版本不支持），按预览结果替换，不要盲信本表。
+**冒烟测试**：`examples/06-shape-smoke-test.drawio` 把上表排成网格。打开一次，凡是显示成矩形或只剩文字的，就是名称无效（或当前版本不支持），按预览结果替换，不要盲信本表。
+
+**2026-11-25 实测（draw.io 32.7.4）**：`shape=summingJunction` 渲染为矩形，`shape=link` 只剩文字，二者已从 Tier B 移除；需要“汇合”语义时用 `shape=or` 加文字标签。其余 31 个关键字均保持可辨认外观。
 
 ## 4. Tier C：库 stencil 与品牌图标
 
@@ -118,6 +118,8 @@ search_shapes("aws lambda")
 | 品牌/概念 | `react`, `slack`, `shopping cart`, `solar panel` |
 
 **重要**：上表是 `search_shapes` 的查询词，不是可手写的 style 前缀。离线时不要把它们拼成 `shape=mxgraph.aws4.lambda` 之类的字符串——名称错一个字符就退化成矩形。
+
+**2026-11-25 实测（@drawio/mcp 1.13.0 / draw.io 32.7.4）**：`examples/08-tier-c-icons.drawio` 用 `search_shapes` 返回的原始 style 验证了 10 个代表图标——AWS S3、Azure Function Apps、GCP BigQuery、Cisco Router、Kubernetes Pod、BPMN Exclusive Gateway、P&ID Gate Valve、Electrical Attenuator、React、Azure VM，全部渲染成功。Azure 与 React 使用远程 `image=` URL，离线打开可能只剩标签；其余为本地 stencil。
 
 ### 4.3 离线降级阶梯
 

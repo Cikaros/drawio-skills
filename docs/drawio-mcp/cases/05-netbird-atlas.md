@@ -70,5 +70,5 @@
 - `netbird/docs/drawio`：17 个 `.drawio` + `README.md`。
 - `validate-drawio.mjs --strict`：17/17，0 error / 0 warning。
 - 视觉：17 页全部导出 PNG；重点页（01/03/04/05/06/07/08/13/14/15）逐页复核，剩余页为抽检。
-- drawio-skills：新增 1 篇参考、1 个示例、1 个案例、3 个契约测试；`npm run verify` 40/40。
-- 未做：逐页人工签字确认；品牌/行业图标（`search_shapes` 离线不可用，Tier C 仍未验证）。
+- drawio-skills：新增 1 篇参考、1 个示例、1 个案例、3 个契约测试；`npm run verify` 41/41。
+- 未做：逐页人工签字确认；品牌/行业图标改走通用形状；Tier C 已在 `examples/08-tier-c-icons.drawio` 单独验证 10 个代表图标，但未回填 NetBird 图集。

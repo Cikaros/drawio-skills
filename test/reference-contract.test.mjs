@@ -41,6 +41,28 @@ test('the smoke test example stays lint-clean and covers the Tier B set', () => 
   assert.deepEqual(errors, []);
   const shapes = (xml.match(/shape=/g) ?? []).length;
   assert.ok(shapes >= 30, `expected at least 30 shape styles, found ${shapes}`);
+  assert.ok(xml.includes('汇合（B，退化）'), 'summingJunction must be labeled as a regression control');
+  assert.ok(xml.includes('链环（B，退化）'), 'link must be labeled as a regression control');
+});
+
+test('the Tier C icon example is lint-clean and keeps exact search_shapes styles', () => {
+  const xml = read('examples/08-tier-c-icons.drawio');
+  const result = lintFile(xml);
+  assert.deepEqual(result.issues, []);
+  for (const token of [
+    'mxgraph.aws4.bucket',
+    'mxgraph.kubernetes.icon2',
+    'mxgraph.bpmn.gateway2',
+    'mxgraph.pid2valves.valve',
+    'mxgraph.electrical.resistors.attenuator',
+    'mxgraph.gcp3.bigquery',
+    'mxgraph.cisco.routers.10700',
+    'image=https://app.diagrams.net/'
+  ]) {
+    assert.ok(xml.includes(token), `missing Tier C style token: ${token}`);
+  }
+  const icons = (xml.match(/id="icon-/g) ?? []).length;
+  assert.ok(icons >= 8, `expected at least 8 Tier C icons, found ${icons}`);
 });
 
 test('SKILL.md points at the selection references', () => {

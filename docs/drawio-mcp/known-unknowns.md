@@ -9,14 +9,13 @@
 | U3 | `set_page` 对无 `name` 页的写回 | 只测了有名字的页 | 造一个无 name 的 `<diagram>`，set 后看 `list_pages` 的名字 |
 | U4 | `set_page` 是否保留 `<diagram>` 上的自定义属性 | 只观察到 `name/id` 保留 | 加一个自定义属性，set 后 diff 文件 |
 | U5 | CSV 导入的完整指令集 | 只验证了 `# label/# style/# connect` 能打开 | 逐条对照 draw.io CSV 规范做矩阵 |
-| U6 | `search_shapes` 的离线缓存/镜像 | 只观察到 fetch failed 与 `DRAWIO_SHAPE_INDEX_URL` | 配置本地索引源，验证可用性 |
 | U7 | 深色模式下 `adaptiveColors="auto"` 的实际取色 | 未在深色系统里逐色比对 | 深色主题下导出截图，比对 fill/stroke |
 | U8 | PNG/SVG 导出的字体替换 | 无桌面版，未导出 | 在装桌面版的机器上导出含中文/Inter 的图 |
 | U9 | 编辑器对超大图的性能边界 | 未测 | 500+ 节点图打开耗时与滚动流畅度 |
 | U10 | `open_drawio_*` 在非默认浏览器/无浏览器环境的行为 | 只观察到"已在默认浏览器打开" | 无 GUI 环境跑一次，记录返回 |
 | U11 | 手绘风 `sketch=1` 与主题色的叠加效果 | 未目视 | 导出对比 |
 | U12 | draw.io 对重复页 id 的实际处理 | lint 会拦，编辑器行为未测 | 造重复 id 文件，用编辑器打开 |
-| U13 | 各形状库 stencil 的具体名称与版本差异 | 未逐一目视；只把核心关键字列为 Tier B，品牌/行业图标列为 Tier C | 打开 `examples/06-shape-smoke-test.drawio` 逐格确认，把退化成矩形的项移出 Tier B；用 `search_shapes` 结果补充 Tier C 样例 |
+| U13 | 各形状库的全量 stencil 名称与版本差异 | 已目视 Tier B 冒烟图（31 个有效 + 2 个退化负例）和 10 个 Tier C 代表图标；未覆盖全部 ~10,800 个名称 | 扩大 `examples/08` 覆盖或做自动化回归；draw.io 升级后重跑 06/08 |
 
 ## 维护规则
 

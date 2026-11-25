@@ -4,7 +4,7 @@
   <root>
 <mxCell id="0"/>
 <mxCell id="1" parent="0"/>
-<mxCell id="title" value="形状冒烟测试：Tier A 直接可用，Tier B 写错会退化成矩形" style="text;html=1;fontSize=16;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1B1F24;" vertex="1" parent="1">
+<mxCell id="title" value="形状冒烟测试：Tier A 直接可用，Tier B 写错会退化成矩形或消失" style="text;html=1;fontSize=16;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1B1F24;" vertex="1" parent="1">
   <mxGeometry x="40" y="10" width="900" height="30" as="geometry"/>
 </mxCell>
 <mxCell id="s1" value="&lt;b&gt;圆角矩形（A）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;rounded=1&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF4FF;strokeColor=#9DB8F2;fontColor=#1B1F24;" vertex="1" parent="1">
@@ -67,7 +67,7 @@
 <mxCell id="s20" value="&lt;b&gt;或（B）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;shape=or&lt;/font&gt;" style="shape=or;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#B8C0CC;fontColor=#1B1F24;" vertex="1" parent="1">
   <mxGeometry x="700" y="590" width="160" height="80" as="geometry"/>
 </mxCell>
-<mxCell id="s21" value="&lt;b&gt;汇合（B）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;shape=summingJunction&lt;/font&gt;" style="shape=summingJunction;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#B8C0CC;fontColor=#1B1F24;" vertex="1" parent="1">
+<mxCell id="s21" value="&lt;b&gt;汇合（B，退化）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;shape=summingJunction&lt;/font&gt;" style="shape=summingJunction;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#B8C0CC;fontColor=#1B1F24;" vertex="1" parent="1">
   <mxGeometry x="40" y="720" width="160" height="80" as="geometry"/>
 </mxCell>
 <mxCell id="s22" value="&lt;b&gt;卡片（B）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;shape=card&lt;/font&gt;" style="shape=card;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#B8C0CC;fontColor=#1B1F24;" vertex="1" parent="1">
@@ -103,7 +103,7 @@
 <mxCell id="s32" value="&lt;b&gt;柔性箭头（B）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;shape=flexArrow&lt;/font&gt;" style="shape=flexArrow;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#B8C0CC;fontColor=#1B1F24;" vertex="1" parent="1">
   <mxGeometry x="700" y="980" width="160" height="80" as="geometry"/>
 </mxCell>
-<mxCell id="s33" value="&lt;b&gt;链环（B）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;shape=link&lt;/font&gt;" style="shape=link;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#B8C0CC;fontColor=#1B1F24;" vertex="1" parent="1">
+<mxCell id="s33" value="&lt;b&gt;链环（B，退化）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;shape=link&lt;/font&gt;" style="shape=link;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#B8C0CC;fontColor=#1B1F24;" vertex="1" parent="1">
   <mxGeometry x="40" y="1110" width="160" height="80" as="geometry"/>
 </mxCell>
 <mxCell id="s34" value="&lt;b&gt;UML 角色（B）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;shape=umlActor&lt;/font&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fillColor=#F7F8FA;strokeColor=#B8C0CC;fontColor=#1B1F24;" vertex="1" parent="1">
@@ -121,7 +121,7 @@
 <mxCell id="s38" value="&lt;b&gt;UML 组件（B）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;shape=component&lt;/font&gt;" style="shape=component;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=36;fillColor=#F7F8FA;strokeColor=#B8C0CC;fontColor=#1B1F24;" vertex="1" parent="1">
   <mxGeometry x="260" y="1240" width="160" height="80" as="geometry"/>
 </mxCell>
-<mxCell id="hint" value="判定方法：形状与标签一致 = 名称有效；显示成矩形 = 名称无效或当前版本不支持。把失效项从 shape-libraries.md 的 Tier B 移出。" style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#5A626E;" vertex="1" parent="1">
+<mxCell id="hint" value="判定方法：形状与标签一致 = 名称有效；显示成矩形或只剩文字 = 名称无效或当前版本不支持。把失效项从 shape-libraries.md 的 Tier B 移出。" style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#5A626E;" vertex="1" parent="1">
   <mxGeometry x="480" y="1230" width="420" height="60" as="geometry"/>
 </mxCell>
   </root>

@@ -2,6 +2,26 @@
 
 遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与语义化版本。
 
+## [0.3.1] - 2026-11-25
+
+### Added
+
+- `examples/08-tier-c-icons.drawio`：用 `search_shapes` 返回的原始 style 验证 AWS S3、Azure Function Apps、GCP BigQuery、Cisco Router、Kubernetes Pod、BPMN Gateway、P&ID Gate Valve、Electrical Attenuator、React、Azure VM 共 10 个 Tier C 图标，lint 零告警。
+- 契约测试覆盖 Tier C 示例的零告警、关键 stencil 与图标数量，并为 Tier B 冒烟图保留 `summingJunction`、`link` 两个退化负例。
+
+### Changed
+
+- `references/shape-libraries.md`：补充 Tier C 实测记录；`shape=summingJunction` 退化为矩形、`shape=link` 只剩文字，二者移出 Tier B。
+- `docs/drawio-mcp/pitfalls.md` P7、`usage.md` 与 `SKILL.md`：说明形状索引首次下载约 4.8 MB、默认缓存位置、`DRAWIO_SHAPE_INDEX_URL` 与可用镜像。
+- `known-unknowns.md`：关闭 U6（索引缓存/镜像）；U13 缩小为全量 ~10,800 名称与版本差异未逐一验证。
+- README 示例数量更新为 8，案例数量更新为 5。
+
+### Validated
+
+- 代理开启后 `search_shapes` 成功；索引缓存 `shape-index.json` 5,089,452 bytes / 10,800 条，本地索引源可被 `loadShapeIndex` 读取。
+- Tier B 冒烟图导出 PNG 逐格检查：31 个名称有效，`summingJunction`/`link` 为退化项；Tier C 10 个代表图标全部渲染。
+- `npm run verify`：41/41 通过；`--strict` 示例校验零 error / 零 warning。
+
 ## [0.3.0] - 2026-11-25
 
 ### Added

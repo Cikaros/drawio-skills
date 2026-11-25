@@ -28,7 +28,7 @@ description: 通过 draw.io MCP 生成、修改和校验 .drawio 图：open_draw
 | `get_page(path, page)` | 读一页 | ❌ | 返回**解压后**的 `mxGraphModel`；page 可用索引、页名或 id |
 | `set_page(path, page, content)` | 整页替换 | ✅ | content 必须是纯 `mxGraphModel`；返回 `Updated page N ("name") in <path>` |
 | `get_drawio_reference(format)` | 取 xml / mermaid 参考 | ❌ | 每个会话各读一次足够，别反复读 |
-| `search_shapes(query)` | 查形状/图标 style | ❌ | 依赖远程索引；离线报 `could not load the shape search index (fetch failed)` |
+| `search_shapes(query)` | 查形状/图标 style | ❌ | 首次调用下载约 4.8 MB 远程索引；失败按 `pitfalls.md` P7 处理 |
 
 工具清单随部署变化：**以当前会话实际提供的工具为准**。缺 `set_page` 时不要假装写入了文件；缺 `search_shapes` 时用已知 style（见 `references/xml-cookbook.md`）。
 
@@ -47,8 +47,8 @@ description: 通过 draw.io MCP 生成、修改和校验 .drawio 图：open_draw
 **元素三级可用性**：
 
 - **Tier A 已验证**：矩形、菱形、椭圆、`shape=cylinder3`、`shape=mxgraph.flowchart.document`、`swimlane`、`group`、`shape=table`、`shape=umlLifeline` —— 直接抄。
-- **Tier B 核心关键字**：`shape=hexagon`、`shape=manualInput`、`shape=actor`、`shape=component` 等 —— 写错会退化成矩形，**首次必须预览**；`examples/06-shape-smoke-test.drawio` 可一次看完 33 个。
-- **Tier C 品牌/库图标**：只能由 `search_shapes` 返回，**禁止手写猜名**；离线时降级为通用形状 + 文字，并在汇报中说明。
+- **Tier B 核心关键字**：`shape=hexagon`、`shape=manualInput`、`shape=actor`、`shape=component` 等 —— 写错会退化成矩形或消失，**首次必须预览**；`examples/06-shape-smoke-test.drawio` 可一次看完 31 个有效项 + 2 个退化负例（`summingJunction`、`link`）。
+- **Tier C 品牌/库图标**：只能由 `search_shapes` 返回，**禁止手写猜名**；`examples/08-tier-c-icons.drawio` 已验证 10 个代表库图标；网络不可用时降级为通用形状 + 文字，并在汇报中说明。
 
 **九组速记**：通用=骨架；基本=流程语义；箭头=方向强调；剪贴画=人/概念；流程图=业务步骤；软件=UML/ER/C4/DFD/BPMN；网络=部署/拓扑；商务=组织/决策；其他=行业专用。
 
@@ -142,7 +142,7 @@ set_page(path, page, 新 model) → 复读 get_page 确认
 | 子元素跑出泳道/容器 | 坐标当成了绝对坐标，或没让开 `startSize` | 相对父容器定位；`horizontal=0` 时 x ≥ startSize |
 | 线穿过方块 | draw.io 默认路由器不做避障 | 加 `routing:"libavoid"`，或调整节点位置 |
 | 图整体太挤 | 超过 ~20 节点仍在用原生布局 | `postLayout:"elk"`，或拆成多页 |
-| `search_shapes` 报 fetch failed | 形状索引是远程资源 | 用基本形状/已知 style；不要重试到超时 |
+| `search_shapes` 报 fetch failed | 默认索引 CDN 被阻断或本地无缓存 | 设 `DRAWIO_SHAPE_INDEX_URL` 指向镜像/本地文件，或预置缓存；仍失败再降级 |
 | `set_page` 后其它页没了 | 传了整份文件而不是单页 model | 传纯 `mxGraphModel`；必要时从备份恢复 |
 | `get_page` 报 index 越界 | 索引 0 起，或文件页数变了 | 先 `list_pages` 重新取索引 |
 

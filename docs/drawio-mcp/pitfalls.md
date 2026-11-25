@@ -82,13 +82,15 @@
 
 **处理**：先 `list_pages`，用返回的 `index` 或 `name` 定位；页名重复时用 id。
 
-### P7. 搜索形状在离线环境失败
+### P7. 搜索形状索引加载失败
 
 **症状**：`could not load the shape search index (fetch failed)`。
 
-**原因**：形状索引是远程资源，可用 `DRAWIO_SHAPE_INDEX_URL` 覆盖。
+**原因**：索引不在 npm 包内，首次调用才从 `cdn.jsdelivr.net` 拉取约 4.8 MB / 10,800 条 JSON；`postinstall` 只预取 libavoid，不预取索引。默认 CDN 在当前网络被 TLS 重置时，若本地也没有缓存，就会直接失败。
 
-**处理**：不要重试到超时。改用基本形状与已知 style（`references/xml-cookbook.md`）；行业图标缺失时用"矩形 + 文字"降级，并在汇报里说明。
+**2026-11-25 实测**：默认地址 `curl`/Node `fetch` 均为 `ECONNRESET`；`fastly.jsdelivr.net`、`testingcf.jsdelivr.net`、`raw.githubusercontent.com` 可正常返回完整索引。代理开启后 `search_shapes` 成功，并生成 `%LOCALAPPDATA%\drawio-mcp\shape-index.json`（约 5.1 MB）；本地索引源也能被 `loadShapeIndex` 读取（10,800 条）。
+
+**处理**：优先用 `DRAWIO_SHAPE_INDEX_URL` 指向可用镜像或本地文件，或预置上述缓存（格式 `{etag, src}`）；仍然失败时再降级为基本形状 + 文字，并在汇报里说明。不要重试到超时。
 
 ### P8. Mermaid 复杂流程图挤成一团
 

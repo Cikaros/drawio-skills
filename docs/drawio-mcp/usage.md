@@ -38,7 +38,7 @@ MCP **不含**渲染引擎，也不含导出器。所以"图长什么样"只能�
 - `get_drawio_reference("mermaid")`：28 种图的关键字与语法。
 - `search_shapes(query)`：返回 `style` 字符串，直接塞进 `mxCell`。
 
-每个会话读一次参考即可；`search_shapes` 依赖网络，失败就降级。
+每个会话读一次参考即可；`search_shapes` 首次调用会下载约 4.8 MB 的远程索引，失败时按 `DRAWIO_SHAPE_INDEX_URL` → 本地缓存 → 基本形状降级的顺序处理（见 `pitfalls.md` P7）。
 
 ## 3. 推荐调用顺序
 
@@ -49,7 +49,7 @@ MCP **不含**渲染引擎，也不含导出器。所以"图长什么样"只能�
    改文件   → list_pages → get_page → 改 → set_page → get_page
 
 ② 需要语法细节 → get_drawio_reference（一次）
-③ 需要行业图标 → search_shapes（可选，可能离线失败）
+③ 需要行业图标 → search_shapes（可选；首次需下载索引，失败按 P7 处理）
 ④ 预览时选布局 → postLayout:"elk" 或 routing:"libavoid"（二选一）
 ```
 
@@ -78,7 +78,7 @@ MCP **不含**渲染引擎，也不含导出器。所以"图长什么样"只能�
 ## 5. 环境与配置
 
 - 编辑器地址默认 `https://app.diagrams.net`；离线/内网需要自建或桌面版。
-- `DRAWIO_SHAPE_INDEX_URL` 可替换形状索引源（`search_shapes` 报 fetch failed 时）。
+- `DRAWIO_SHAPE_INDEX_URL` 可替换形状索引源（`search_shapes` 报 fetch failed 时）。默认缓存位于 `%LOCALAPPDATA%\drawio-mcp\shape-index.json`；代理或镜像可用时首次调用会自动写入。
 - 每个 open 调用会开一个浏览器标签；批量预览会很吵。
 - 仓库脚本只依赖 Node ≥ 20，无第三方包。
 

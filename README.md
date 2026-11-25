@@ -26,7 +26,7 @@ docs/
     pitfalls.md              15 条实测陷阱 + 行为矩阵
     glossary.md              mxCell / mxfile / startSize / libavoid 等
     known-unknowns.md        12 项未验证行为与关闭条件
-    cases/                   4 个实战案例
+    cases/                   5 个实战案例
   diagram/                   第二部分：制图
     principles.md            一张图一个论点、语义形状、反模式
     layout.md                网格、方向、间距、交叉、容器、规模
@@ -51,7 +51,7 @@ scripts/
   build-site.mjs             零依赖静态站
   install-skill.ps1          带备份与版本戳的安装
   doctor.ps1                 环境与仓库自检
-examples/                    7 个 lint-clean 的 .drawio 示例（含时序图与形状冒烟测试）
+examples/                    8 个 lint-clean 的 .drawio 示例（含时序图、形状冒烟测试与 Tier C 图标）
 test/                        纯函数与文档契约测试
 verification/                探针、兼容性矩阵、实测日志
 ```

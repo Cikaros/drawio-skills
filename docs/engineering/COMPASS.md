@@ -77,7 +77,7 @@ npm run verify  # check + test
 | P0 | 工具契约实测、SKILL.md、XML 校验器、示例 | 完成（v0.1.0） |
 | P1 | 设计规范（布局/颜色/图种/可访问性）、案例、验证日志 | 完成（v0.1.0） |
 | P2 | 静态站、安装脚本、doctor、CI | 完成（v0.1.0） |
-| P3 | 导出流水线（桌面版 CLI）、形状索引离线镜像、ELK/libavoid 对比实验 | 待做 |
+| P3 | 导出流水线（桌面版 CLI）、形状索引缓存/镜像、ELK/libavoid 对比实验 | 导出与索引缓存已验证；ELK/libavoid 对比待做 |
 | P4 | 多语言（英文 SKILL）、模板库、与 draw.io 桌面版集成 | 待做 |
 
 P3/P4 的前提是 `known-unknowns.md` 里的 U1/U2/U8 有结论。
