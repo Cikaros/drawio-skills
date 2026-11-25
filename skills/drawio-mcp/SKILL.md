@@ -162,9 +162,10 @@ set_page(path, page, 新 model) → 复读 get_page 确认
 
 ## 参考
 
-- `references/xml-cookbook.md`：形状、容器、泳道、表格布局、层、标签、主题的可复制 XML
+- `references/xml-cookbook.md`：形状、容器、泳道、表格布局、ER 实体、层、标签、主题的可复制 XML
+- `references/sequences.md`：XML 时序图的生命线、消息锚点、分支与自检
 - `references/shape-libraries.md`：九组元素的选择、Tier A/B/C、离线降级、上下文映射
-- `references/scenarios.md`：68 个软件工程场景 × 图种 × 元素 × 验收
+- `references/scenarios.md`：68 个软件工程场景 × 图种 × 元素 × 验收，附真实项目图集工作流
 - `references/mermaid.md`：28 种图的选择、ELK 触发条件、样式与降级
 - `references/validation.md`：lint 规则、几何算法、预览与导出验收
 - `references/recipes.md`：流程图、架构图、ER、泳道、多页改写的完整骨架

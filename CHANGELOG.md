@@ -2,6 +2,27 @@
 
 遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与语义化版本。
 
+## [0.3.0] - 2026-11-25
+
+### Added
+
+- `references/sequences.md`：XML 时序图的生命线布局、`exitY/entryY` 锚点公式、同步/返回/分支写法与自检；补上 Mermaid 之外的精确排版路径。
+- `examples/07-sequence-lifelines.drawio`：4 参与者、6 消息的最小可打开示例，lint 零告警。
+- `references/scenarios.md` 新增「真实项目图集（Atlas）」八步工作流：事实源盘点、矩阵、命名、索引、批量校验、视觉抽检、缺口记录。
+- `docs/drawio-mcp/cases/05-netbird-atlas.md`：在真实仓库 NetBird 上产出 17 张设计图的案例与暴露的缺口。
+
+### Changed
+
+- `references/xml-cookbook.md` 增加 ER 实体盒与 crow's foot 画法，并给时序图章节加指针。
+- `references/validation.md` 第 5 节改为 draw.io 桌面 CLI 批量导出流程，新增 5.1「静态 lint 查不到的典型缺陷」：穿框、叠线、标签压线、箭头指错列、自动布局破坏语义。
+- `SKILL.md` 参考清单加入 `sequences.md`。
+- README 示例数量更新为 7，并加入 Atlas 入口。
+
+### Validated
+
+- 外部项目 `netbird/docs/drawio`：17 个 `.drawio` 文件、`--strict` 零 error / 零 warning；图集含系统上下文、用例、容器、组件、部署、网络、ER、3 张时序、策略、路由/DNS、认证、状态机、CI、可观测性、Agent Network。
+- 用 draw.io 32.7.4 CLI 将 17 页导出 PNG 做视觉回归，修正 01/03/04/05/06/07/08/13/14/15 的穿框、叠线与文字溢出；重点页复核后重新导出，lint 复跑仍为零告警。
+
 ## [0.2.0] - 2026-11-25
 
 ### Added

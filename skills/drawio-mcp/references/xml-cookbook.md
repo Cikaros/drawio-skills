@@ -161,6 +161,29 @@
 
 宽度不必精确加总，`tableLayout` 会归一化；不要给行/单元格设 `startSize`；不要把泳道塞进表格行。
 
+## 6.5 ER 实体与 crow's foot
+
+实体用 HTML 文本盒，不用 `shape=table`（那是交叉职能表）。固定 250×160，标题下一行 `<hr>` 分隔字段：
+
+```xml
+<mxCell id="peer" value="&lt;b&gt;PEER&lt;/b&gt;&lt;hr&gt;id &lt;font color=&quot;#C9302C&quot;&gt;PK&lt;/font&gt;&lt;br&gt;account_id &lt;font color=&quot;#5A626E&quot;&gt;FK&lt;/font&gt;&lt;br&gt;key&lt;br&gt;dns_label&lt;br&gt;ip / ipv6" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#EEF4FF;strokeColor=#9DB8F2;fontColor=#1B1F24;fontSize=11;" vertex="1" parent="1">
+  <mxGeometry x="60" y="100" width="250" height="160" as="geometry"/>
+</mxCell>
+```
+
+关系用 crow's foot：
+
+```xml
+<mxCell id="r1" value="1:N" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERmandOne;endArrow=ERmany;endFill=0;strokeColor=#8A94A6;fontColor=#5A626E;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="account" target="peer">
+  <mxGeometry relative="1" as="geometry"/>
+</mxCell>
+```
+
+- 多对多用显式连接表（`GROUP_PEER`），不要画成两条直接的多对多线。
+- `sources[]` / `destinations[]` 这类 JSON 数组是逻辑关系，用虚线并在标签写明，不要伪造外键。
+- 字段多时增高到 180–200；超过 8 个字段就只留主键/外键/判别字段，其余放到数据字典。
+- 所有实体都有 `account_id` 时在标题或 note 说明一次，不要每条线都画租户边。
+
 ## 7. 层与标签
 
 层（可分别隐藏）：
@@ -224,3 +247,7 @@
 - 层 cell 的 `parent="0"`，且**没有** `vertex`/`edge` 属性。
 - `object` 包裹时 id 写在 `object` 上，`mxCell` 不再写 id。
 - 别把 `<mxfile>` 传给 `open_drawio_xml`。
+
+## 10. 时序图生命线
+
+生命线用 `shape=umlLifeline`，消息用 `edgeStyle=none` + `exitY/entryY` 百分比锚点；完整公式、分支、自检见 [sequences.md](sequences.md)。最小示例：`examples/07-sequence-lifelines.drawio`。

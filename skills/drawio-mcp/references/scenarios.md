@@ -211,3 +211,29 @@
 - 部署/网络（B8–B10）→ 网络库；品牌图标只能 `search_shapes`，离线降级。
 - 组织/决策（H/I）→ 商务库 + 通用；矩阵用 `shape=table`，象限用轴 + 文本。
 - 每个 Tier B/C 形状首次使用必须预览（见 `shape-libraries.md` 第 3–4 节）。
+
+## 8. 真实项目图集（Atlas）
+
+把一个真实仓库变成可维护的图集，按这个顺序做：
+
+1. **盘点事实源**：README/AGENTS、部署 compose、proto/OpenAPI、领域模型、关键实现、CI 工作流。先列“已证实”的组件、实体、协议、端口，再决定画什么。
+2. **建矩阵**：阶段 × 问题 × 图种 × 证据文件。一个阶段至少一张；没有证据的图不画。
+3. **定命名**：`NN-topic.drawio`，NN 两位序号；页名写问题，文件名写主题；同目录放 `README.md` 索引。
+4. **先总览后细节**：上下文 → 容器 → 组件 → 部署/网络 → 数据 → 关键行为 → 交付/运维。每张只回答一个问题。
+5. **页脚写依据**：`依据：path/a、path/b`；图与代码冲突时以代码为准，并回来改图。
+6. **批量校验**：`validate-drawio.mjs --strict docs/drawio/*.drawio`，零 error/零 warning 后再做视觉检查。
+7. **视觉抽检**：至少打开总览、最密的一张、时序图；检查交叉、标签遮挡、页面越界。静态 lint 不能替代预览。
+8. **记录缺口**：把“无法验证的 stencil / 画不出的语义 / 工具限制”写进 `known-unknowns.md`，不要用猜测补齐。
+
+命名与索引示例：
+
+```text
+docs/drawio/
+  01-system-context.drawio
+  02-use-cases.drawio
+  08-domain-model-er.drawio
+  09-peer-registration-sequence.drawio
+  README.md
+```
+
+规模控制：一个图集 10–20 张足够覆盖设计阶段；超过 20 张先合并同视图，或拆成 `architecture/`、`behavior/` 子目录。

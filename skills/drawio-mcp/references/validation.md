@@ -71,16 +71,32 @@ draw.io MCP **不做校验**：`open_drawio_xml` 对畸形 XML 同样返回 URL�
 - 结构复杂、坐标只是草案 → `postLayout:"elk"`（会重排，别再手调坐标）。
 - `postLayout` 与 `routing` 不要同时给。
 
-## 5. 导出（可选）
+## 5. 导出与视觉回归（draw.io 桌面 CLI）
 
-装了 draw.io 桌面版才可用：
+装了 draw.io 桌面版即可批量导出，不需要打开 GUI：
 
 ```powershell
-drawio --export --format png --scale 2 --output out.png file.drawio
-drawio --export --format svg --output out.svg file.drawio
+draw.io -x -f png --size page -o out.png file.drawio
+draw.io -x -f svg --size page -o out.svg file.drawio
 ```
 
-没有桌面版时不要假装导出成功；改用浏览器预览 + 明确声明"未做视觉确认"。
+- `-x` 导出、`-f` 格式、`-o` 输出；`--size page` 按页面尺寸出图，最接近编辑器里的 100% 视图。
+- 批量时逐文件调用；输出目录必须先存在。
+- 导出成功只证明“能渲染”，仍要逐张看图：箭头指向、标签压线、线穿框、页面空白比例。
+
+### 5.1 静态 lint 查不到的典型缺陷
+
+| 现象 | 原因 | 修法 |
+|---|---|---|
+| 线从框中间穿过 | 只用 waypoint，没有指定出入边；正交路由按中心点连线 | 给边加 `exitX/exitY` 与 `entryX/entryY`，waypoint 放在行间/列间走廊 |
+| 多条线叠成一条黑带 | 多条边共用同一走廊且都带箭头 | 合并语义到一个“总线”节点，或分走廊（y=210 / 230） |
+| 标签压在线上 | 边标签无背景或走廊太窄 | `labelBackgroundColor=#FFFFFF`；仍挤就删边标签，把语义放进节点副标题/图例 |
+| 箭头指向错误对象 | 目标列坐标算错（如把 Turn 指到 DNS） | 用节点中心坐标核对 waypoint；导出 PNG 逐箭头检查 |
+| 自动布局后语义错乱 | `--layout` 按图论重排，不保留“左控制面/右数据面” | 语义布局禁用 `--layout`；只对纯流程图使用 |
+
+**不要用“删掉所有 waypoint 让 draw.io 自动绕”当万能解**：默认正交路由不避障，删点后线往往直接穿框。正确顺序是：先给锚点，再给走廊 waypoint，最后导出复核。
+
+没有桌面版时不要假装导出成功；改用浏览器预览 + 明确声明“未做视觉确认”。
 
 ## 6. 人工看什么
 

@@ -8,6 +8,7 @@
 | 02 | [把 Mermaid 固化成可交付 XML](02-mermaid-to-xml.md) | Mermaid、ELK、迁移 |
 | 03 | [改多页文件的其中一页](03-edit-multi-page.md) | list/get/set、压缩页 |
 | 04 | [修"线不显示 / 标签显示成标签"](04-render-defects.md) | 诊断、最小复现 |
+| 05 | [真实项目图集：NetBird](05-netbird-atlas.md) | 图集规划、时序/ER 配方、Atlas 工作流 |
 
 ## 共同前提
 

@@ -37,7 +37,7 @@ docs/
     prompt-brief.md          8 项简报模板与追问清单
 skills/
   drawio-mcp/SKILL.md        可直接安装的技能（短、可执行）
-    references/              XML 速查、Mermaid、CSV、形状库、场景矩阵、校验、配方
+    references/              XML 速查、时序、Mermaid、CSV、形状库、场景矩阵、校验、配方
     manifest.json            文件清单与 SHA-256
 shared/
   xml-parse.mjs              零依赖 XML 解析
@@ -51,7 +51,7 @@ scripts/
   build-site.mjs             零依赖静态站
   install-skill.ps1          带备份与版本戳的安装
   doctor.ps1                 环境与仓库自检
-examples/                    6 个 lint-clean 的 .drawio 示例（含形状冒烟测试）
+examples/                    7 个 lint-clean 的 .drawio 示例（含时序图与形状冒烟测试）
 test/                        纯函数与文档契约测试
 verification/                探针、兼容性矩阵、实测日志
 ```
@@ -84,6 +84,8 @@ Copy-Item -Recurse .\skills\drawio-mcp "$env:USERPROFILE\.sclaw\agent\skills\"
 **想直接抄骨架**：`skills/drawio-mcp/references/recipes.md`，对照 `examples/`。
 
 **不知道选哪种图**：先查 `skills/drawio-mcp/references/scenarios.md` 的 68 个软件工程场景矩阵，再用 `shape-libraries.md` 选元素与降级方案。
+
+**要给真实仓库出一整套图**：按 `scenarios.md` 第 8 节的 Atlas 工作流：盘点事实源 → 建矩阵 → 命名与索引 → 批量 lint → 视觉抽检 → 记录缺口。
 
 ## 文档站发布
 

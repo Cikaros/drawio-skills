@@ -47,5 +47,25 @@ test('SKILL.md points at the selection references', () => {
   const text = read('skills/drawio-mcp/SKILL.md');
   assert.ok(text.includes('references/scenarios.md'));
   assert.ok(text.includes('references/shape-libraries.md'));
+  assert.ok(text.includes('references/sequences.md'));
   assert.ok(text.includes('examples/06-shape-smoke-test.drawio'));
+});
+
+test('sequence reference keeps the anchoring rules', () => {
+  const text = read('skills/drawio-mcp/references/sequences.md');
+  for (const token of ['shape=umlLifeline', 'exitY', 'entryY', 'labelBackgroundColor', 'dashed=1', 'examples/07-sequence-lifelines.drawio']) {
+    assert.ok(text.includes(token), `missing token: ${token}`);
+  }
+});
+
+test('sequence example stays lint-clean', () => {
+  const result = lintFile(read('examples/07-sequence-lifelines.drawio'));
+  assert.deepEqual(result.issues, []);
+});
+
+test('scenarios include the real-project atlas workflow', () => {
+  const text = read('skills/drawio-mcp/references/scenarios.md');
+  assert.ok(text.includes('真实项目图集'));
+  assert.ok(text.includes('视觉抽检'));
+  assert.ok(text.includes('README.md'));
 });
