@@ -29,6 +29,14 @@ function relative(dir, file) {
   return path.relative(dir, file).split(path.sep).join('/');
 }
 
+// Git stores text with LF, but a Windows checkout may hand us CRLF. Hash the
+// normalised text so the manifest is identical on every platform and CI does
+// not report a false drift. Binary files are left untouched.
+function normaliseText(buffer) {
+  if (buffer.includes(0)) return buffer;
+  return Buffer.from(buffer.toString('utf8').replace(/\r\n?/g, '\n'), 'utf8');
+}
+
 let drift = 0;
 const skillNames = fs.readdirSync(skillsDir, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
@@ -42,7 +50,7 @@ for (const name of skillNames) {
     .filter((file) => file !== manifestPath)
     .sort()
     .map((file) => {
-      const buffer = fs.readFileSync(file);
+      const buffer = normaliseText(fs.readFileSync(file));
       return {
         path: relative(dir, file),
         bytes: buffer.length,

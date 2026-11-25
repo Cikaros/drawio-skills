@@ -1,11 +1,11 @@
 {
   "name": "drawio-mcp",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "files": [
     {
       "path": "SKILL.md",
-      "bytes": 13035,
-      "sha256": "cdd198f6f41413b8960710b3664d13e9946bfdfbc4a5da7ffba8f866e37ebbed"
+      "bytes": 12860,
+      "sha256": "6decf650c4694a16307d5e77a94946de74f7e6943c38dec8748a7e2f377e0701"
     },
     {
       "path": "references/csv.md",

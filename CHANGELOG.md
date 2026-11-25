@@ -2,6 +2,18 @@
 
 遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与语义化版本。
 
+## [0.4.1] - 2026-11-25
+
+### Fixed
+
+- `build-manifest` 对文本文件先把 CRLF/CR 归一化为 LF，再计算 `bytes` 与 `sha256`；修复 Windows 工作区生成、Linux GitHub Actions 校验时的 manifest 假漂移。
+- 新增 `.gitattributes`（`* text=auto eol=lf`），统一后续 checkout 的文本换行。
+
+### Validated
+
+- 同一份 `SKILL.md` 在 CRLF 与 LF 两种工作区形态下均通过 `build-manifest.mjs --check`。
+- `npm run verify`：46/46 通过；`npm run site:check`：35 页无断链。
+
 ## [0.4.0] - 2026-11-25
 
 ### Added

@@ -1,0 +1,3 @@
+# Keep text checkouts LF everywhere so the deterministic manifests built on
+# Windows and Linux describe the same bytes.
+* text=auto eol=lf
