@@ -30,6 +30,8 @@ if ($git) { Ok "git $((& git --version) -replace '^git version ','')" } else { I
 Write-Host "`n[repository]"
 $required = @(
   "README.md", "package.json", "skills\drawio-mcp\SKILL.md",
+  "skills\drawio-mcp\scripts\validate-drawio.mjs",
+  "skills\drawio-mcp\scripts\lib\drawio-lint.mjs",
   "shared\drawio-lint.mjs", "scripts\validate-drawio.mjs",
   "examples\01-approval-flow.drawio", "verification\compatibility.md"
 )
@@ -46,8 +48,14 @@ Write-Host "`n[examples]"
 if ($LASTEXITCODE -ne 0) { Bad "example validation failed" } else { Ok "example validates" }
 
 Write-Host "`n[skill installation]"
-$installed = Join-Path $env:USERPROFILE ".sclaw\agent\skills\drawio-mcp\SKILL.md"
-if (Test-Path $installed) { Ok "installed at $installed" } else { Info "not installed (run: .\scripts\install-skill.ps1)" }
+$installedRoot = Join-Path $env:USERPROFILE ".sclaw\agent\skills\drawio-mcp"
+$installedSkill = Join-Path $installedRoot "SKILL.md"
+$installedValidator = Join-Path $installedRoot "scripts\validate-drawio.mjs"
+if (Test-Path $installedSkill) {
+  Ok "installed at $installedSkill"
+  if (Test-Path $installedValidator) { Ok "installed skill has validator" }
+  else { Bad "installed skill is incomplete: missing scripts\validate-drawio.mjs (reinstall)" }
+} else { Info "not installed (run: .\scripts\install-skill.ps1)" }
 
 Write-Host "`n[draw.io editor]"
 $localAppData = $env:LOCALAPPDATA

@@ -30,7 +30,7 @@ MCP **不含**渲染引擎，也不含导出器。所以"图长什么样"只能�
 - `get_page(path, page)`：读一页，page 可以是索引、页名或 id；返回**解压后**的 `mxGraphModel`。
 - `set_page(path, page, content)`：整页替换，content 必须是纯 `mxGraphModel`；保留该页原有压缩状态。
 
-三者只能操作**已存在**的文件。新建文件要自己写（`shared/drawio-file.mjs` 的 `buildMxfile` 可以直接用）。
+三者只能操作**已存在**的文件。新建文件要自己写（技能内 `scripts/lib/drawio-file.mjs` 的 `buildMxfile` 可以直接用；仓库根目录 `shared/drawio-file.mjs` 是兼容入口）。
 
 ### 2.3 知识（get_drawio_reference / search_shapes）
 

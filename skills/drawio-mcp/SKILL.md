@@ -7,6 +7,8 @@ description: 通过 draw.io MCP 生成、修改和校验 .drawio 图：open_draw
 
 目标：用最少调用产出**能打开、能看懂、能验收**的图；不把坏 XML 交给浏览器。
 
+技能自带校验器：`scripts/validate-drawio.mjs`，依赖在 `scripts/lib/`。安装后整个技能目录即可独立运行，不需要仓库根目录；命令以**技能根目录**为工作目录，或使用该脚本的绝对路径。
+
 ## 0. 先分清两种交付形态
 
 | 你要的结果 | 正确路径 | 不要做的事 |
@@ -57,7 +59,7 @@ description: 通过 draw.io MCP 生成、修改和校验 .drawio 图：open_draw
 ## 2. 铁律
 
 1. **先写文件，再预览**。要交付就落盘 `.drawio`，预览只是最后一眼。
-2. **先校验，再打开**。`open_drawio_xml` 不校验；畸形 XML 在浏览器里才炸。用 `scripts/validate-drawio.mjs` 或本技能 `references/validation.md` 的检查表。
+2. **先校验，再打开**。`open_drawio_xml` 不校验；畸形 XML 在浏览器里才炸。用本技能自带的 `scripts/validate-drawio.mjs`，或 `references/validation.md` 的检查表。
 3. **一条边必须有 `<mxGeometry relative="1" as="geometry"/>`**，且不能用自闭合 `<mxCell .../>` 表示边。
 4. **边挂在最内层公共容器上**；两端不在同一容器时 `parent="1"`。挂错帧会被布局引擎画歪。
 5. **容器子元素坐标是相对容器的**；swimlane 的 `startSize` 是标题区，子元素必须让开。
@@ -95,7 +97,7 @@ description: 通过 draw.io MCP 生成、修改和校验 .drawio 图：open_draw
 </mxfile>
 ```
 
-**第 3 步 本地校验**：
+**第 3 步 本地校验**（在技能根目录执行；安装后即 `.../skills/drawio-mcp`）：
 
 ```bash
 node scripts/validate-drawio.mjs --strict path/to/file.drawio
@@ -103,7 +105,13 @@ node scripts/validate-drawio.mjs --strict path/to/file.drawio
 
 零 error 且零 warning 才继续。警告也要看：`LAYOUT001`（重叠）、`LAYOUT002`（越界）、`EDGE004`（边挂错帧）、`EDGE005`（共享段/原路折返）、`EDGE006`（穿框）都是真实视觉缺陷。
 
-只安装了本技能、没有仓库时：按 `references/validation.md` 第 2 节的规则表逐条人工核对；能带上仓库的 `shared/` 与 `scripts/validate-drawio.mjs` 就用脚本。
+校验器与 `scripts/lib/` 随技能安装，不需要仓库根目录。若当前工作目录不是技能根目录，直接用绝对路径：
+
+```bash
+node <skill-root>/scripts/validate-drawio.mjs --strict path/to/file.drawio
+```
+
+把 `<skill-root>` 换成**包含本 `SKILL.md` 的目录**（例如 opencode 的技能安装目录）。不要把它当成仓库根目录。
 
 **第 4 步 预览**：把**当前页的 model**（不是整个 mxfile）传给 `open_drawio_xml`；需要左到右布局时加 `direction:"horizontal"`，有大量交叉时加 `routing:"libavoid"`。一次只预览一页，避免刷一屏标签页。
 
@@ -151,7 +159,7 @@ set_page(path, page, 新 model) → 复读 get_page 确认
 ## 7. 交付前检查清单
 
 - [ ] 文件能在 draw.io 打开（根节点正确、无注释、无未闭合标签）
-- [ ] `validate-drawio.mjs --strict` 零 error；warning 已逐条判断
+- [ ] 技能内 `scripts/validate-drawio.mjs --strict` 零 error；warning 已逐条判断
 - [ ] 每条边都有 source/target 与 `relative="1"` 的 geometry
 - [ ] 边挂在最内层公共容器上
 - [ ] 没有 `EDGE005`（共享段/折返）与 `EDGE006`（穿框）

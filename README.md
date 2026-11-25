@@ -37,16 +37,19 @@ docs/
     review-checklist.md      阻断/应修/建议三档评审
     prompt-brief.md          8 项简报模板与追问清单
 skills/
-  drawio-mcp/SKILL.md        可直接安装的技能（短、可执行）
+  drawio-mcp/                可直接安装的技能（安装后自包含）
+    SKILL.md                 操作规范
+    scripts/validate-drawio.mjs  自带校验器（--strict / --json）
+    scripts/lib/             XML 解析、mxfile/压缩页、lint 规则
     references/              XML 速查、时序、Mermaid、CSV、形状库、场景矩阵、校验、配方
     manifest.json            文件清单与 SHA-256
 shared/
-  xml-parse.mjs              零依赖 XML 解析
-  drawio-file.mjs            mxfile、压缩页、多页读写
-  drawio-lint.mjs            29 条渲染缺陷规则（含边共享段/穿框）
   drawio-guards.mjs          网格、角色色、标签、边模板
+  xml-parse.mjs              兼容入口（re-export 技能内实现）
+  drawio-file.mjs            兼容入口（mxfile、压缩页、多页读写）
+  drawio-lint.mjs            兼容入口（29 条渲染缺陷规则）
 scripts/
-  validate-drawio.mjs        命令行校验器（--strict / --json）
+  validate-drawio.mjs        仓库兼容入口（转发到技能内校验器）
   check-docs.mjs             链接、围栏、标题、frontmatter、示例
   build-manifest.mjs         生成/校验技能清单
   build-site.mjs             零依赖静态站
@@ -71,6 +74,8 @@ verification/                探针、兼容性矩阵、实测日志
 ```powershell
 Copy-Item -Recurse .\skills\drawio-mcp "$env:USERPROFILE\.sclaw\agent\skills\"
 ```
+
+安装后的 `drawio-mcp/` 自带 `scripts/validate-drawio.mjs` 与 `scripts/lib/`。在技能根目录运行校验即可，不要依赖仓库根目录；工作目录不同时使用该脚本的绝对路径。
 
 ### 前置条件
 

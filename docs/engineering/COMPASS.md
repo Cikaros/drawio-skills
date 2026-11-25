@@ -31,7 +31,7 @@ Agent 第一次用 draw.io MCP 时，必须自己试出：哪个工具会落盘�
 |---|---|---|
 | 工具契约、实测行为 | `docs/drawio-mcp/pitfalls.md` | 技能里只写结论 + 指针 |
 | XML 骨架、样式 | `skills/drawio-mcp/references/xml-cookbook.md` | 文档引用，不复制 |
-| 校验规则 | `shared/drawio-lint.mjs` | `references/validation.md` 写规则表 |
+| 校验规则 | `skills/drawio-mcp/scripts/lib/drawio-lint.mjs` | `references/validation.md` 写规则表 |
 | 网格/角色色 | `shared/drawio-guards.mjs` | 文档写数值，测试保证一致 |
 | 示例 | `examples/*.drawio` | 文档引用文件名 |
 

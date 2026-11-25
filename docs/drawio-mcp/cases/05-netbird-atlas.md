@@ -40,7 +40,7 @@
 ## 执行
 
 1. 盘点事实源，列出 17 个问题。
-2. 写一个本地 DSL（node + 仓库的 `shared/drawio-file.mjs`）生成 `mxCell`，统一配色、图例、页脚。
+2. 写一个本地 DSL（node + 技能内 `scripts/lib/drawio-file.mjs`）生成 `mxCell`，统一配色、图例、页脚。
 3. 每批生成后跑 `validate-drawio.mjs --strict`，先修 `LAYOUT001`（节点/分区标签重叠）与 `EDGE005/006`（边共享段、原路折返、穿框）。
 4. 用 draw.io 桌面 CLI 批量导出 PNG 做视觉回归：`draw.io -x -f png --size page -o <out>.png <in>.drawio`。
 5. 按 PNG 逐个修正：删掉穿框的长边、给跨行列边补 `exitX/exitY` + `entryX/entryY`，同一形状的出入边分端口，waypoint 放进行间/列间走廊；扇出边按目标顺序排走廊；密集页删除边标签，语义留在节点副标题/图例。

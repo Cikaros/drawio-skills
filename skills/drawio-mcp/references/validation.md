@@ -2,6 +2,8 @@
 
 draw.io MCP **不做校验**：`open_drawio_xml` 对畸形 XML 同样返回 URL。所以验收必须分三层，顺序不能反。
 
+> 校验器随技能安装：`scripts/validate-drawio.mjs`，依赖在 `scripts/lib/`。下表命令默认在**技能根目录**执行；当前目录不在技能目录时，改用 `<skill-root>/scripts/validate-drawio.mjs` 的绝对路径，其中 `<skill-root>` 是包含 `SKILL.md` 的目录，不是仓库根目录。
+
 ## 1. 三层验收
 
 | 层 | 手段 | 能证明什么 | 不能证明什么 |
@@ -14,7 +16,7 @@ draw.io MCP **不做校验**：`open_drawio_xml` 对畸形 XML 同样返回 URL�
 
 ## 2. lint 规则表
 
-`shared/drawio-lint.mjs` 的规则，全部来自真实渲染缺陷：
+`scripts/lib/drawio-lint.mjs` 的规则，全部来自真实渲染缺陷：
 
 | 代码 | 级别 | 含义 | 典型修法 |
 |---|---|---|---|
@@ -64,7 +66,7 @@ draw.io MCP **不做校验**：`open_drawio_xml` 对畸形 XML 同样返回 URL�
 ## 4. 预览流程
 
 ```text
-1. node scripts/validate-drawio.mjs --strict file.drawio   # 0 error
+1. node scripts/validate-drawio.mjs --strict file.drawio   # 技能根目录；0 error
 2. get_page(file, page)                                     # 确认页内容
 3. open_drawio_xml(<该页 mxGraphModel>, direction?, routing?) # 一次一页
 ```

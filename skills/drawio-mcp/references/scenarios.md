@@ -221,7 +221,7 @@
 3. **定命名**：`NN-topic.drawio`，NN 两位序号；页名写问题，文件名写主题；同目录放 `README.md` 索引。
 4. **先总览后细节**：上下文 → 容器 → 组件 → 部署/网络 → 数据 → 关键行为 → 交付/运维。每张只回答一个问题。
 5. **页脚写依据**：`依据：path/a、path/b`；图与代码冲突时以代码为准，并回来改图。
-6. **批量校验**：`validate-drawio.mjs --strict docs/drawio/*.drawio`，零 error/零 warning 后再做视觉检查。
+6. **批量校验**：在技能根目录运行 `node scripts/validate-drawio.mjs --strict docs/drawio/*.drawio`；零 error/零 warning 后再做视觉检查。
 7. **视觉抽检**：至少打开总览、最密的一张、时序图；检查交叉、标签遮挡、页面越界。静态 lint 不能替代预览。
 8. **记录缺口**：把“无法验证的 stencil / 画不出的语义 / 工具限制”写进 `known-unknowns.md`，不要用猜测补齐。
 

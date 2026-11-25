@@ -2,6 +2,24 @@
 
 遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与语义化版本。
 
+## [0.4.2] - 2026-11-25
+
+### Fixed
+
+- 技能包改为自包含：校验器与依赖移入 `skills/drawio-mcp/scripts/`（`validate-drawio.mjs` + `scripts/lib/`），修复安装到 opencode 后提示“校验脚本目录不存在”。
+- 仓库根目录 `scripts/validate-drawio.mjs` 与 `shared/{xml-parse,drawio-file,drawio-lint}.mjs` 保留为兼容入口，现有测试、探针与文档命令不受影响。
+- 安装脚本与 `doctor.ps1` 检查技能内校验器；安装脚本按 LF 归一化校验 manifest，并把相对 `-Target` 解析成绝对路径，避免 .NET 从进程目录读文件而误报缺失。
+
+### Changed
+
+- `SKILL.md` 与 `references/validation.md` 明确：命令在技能根目录执行，或使用 `<skill-root>/scripts/validate-drawio.mjs` 绝对路径。
+- README 目录树与工程罗盘更新为技能内实现路径。
+
+### Validated
+
+- `skill validator` 从 `skills/drawio-mcp` 目录直接运行示例：0 error / 0 warning。
+- 新增技能包契约测试；`npm run verify`：48/48 通过。
+
 ## [0.4.1] - 2026-11-25
 
 ### Fixed

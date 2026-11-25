@@ -1,11 +1,11 @@
 {
   "name": "drawio-mcp",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "files": [
     {
       "path": "SKILL.md",
-      "bytes": 12860,
-      "sha256": "6decf650c4694a16307d5e77a94946de74f7e6943c38dec8748a7e2f377e0701"
+      "bytes": 13380,
+      "sha256": "4bdb32df80a43439ca8f3cea1db5956aa7e5b4a22487bc45a38e97aa7d513eb1"
     },
     {
       "path": "references/csv.md",
@@ -24,8 +24,8 @@
     },
     {
       "path": "references/scenarios.md",
-      "bytes": 15293,
-      "sha256": "9881d4e870ac0b9b9dcc83c35009001ea226c19a1f7c30048f86b84b9bc13099"
+      "bytes": 15331,
+      "sha256": "2994d068b69b27da283811b009a43dcd3ba70a7f86dc1c33a342b997641661ea"
     },
     {
       "path": "references/sequences.md",
@@ -39,13 +39,33 @@
     },
     {
       "path": "references/validation.md",
-      "bytes": 8467,
-      "sha256": "5f4f8ee55c23df8a67c32ee93f9d8e5a5cd52491ead6421543a2bdf9bc75b834"
+      "bytes": 8812,
+      "sha256": "b43582850be3000bd52e5042843a8dd349e488334a67f0da80a482b38b4c4b81"
     },
     {
       "path": "references/xml-cookbook.md",
       "bytes": 13143,
       "sha256": "4dae539180096d1d60857df2d0194557a3b0f91a2e3e825cd31eacd43b19885b"
+    },
+    {
+      "path": "scripts/lib/drawio-file.mjs",
+      "bytes": 6733,
+      "sha256": "5a6ac35426f721089fb6700f43171a7596b85ef22e23e65a4b3fef0202468d6e"
+    },
+    {
+      "path": "scripts/lib/drawio-lint.mjs",
+      "bytes": 20741,
+      "sha256": "09a9fedd9ab1cc7640175ec0401ceb2f51863b758e6ae75d7b36c2c8aaf4f0e7"
+    },
+    {
+      "path": "scripts/lib/xml-parse.mjs",
+      "bytes": 6607,
+      "sha256": "ac843b02260d2a81357077457a89931f28ffa531034e068d30fd37f4ef44d7a3"
+    },
+    {
+      "path": "scripts/validate-drawio.mjs",
+      "bytes": 2351,
+      "sha256": "74293fe1a0d353bafb0bcf9581fc12cb8d287ba905ac0b24766aa22f62d104fd"
     }
   ]
 }
