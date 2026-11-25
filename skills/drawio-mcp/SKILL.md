@@ -32,6 +32,28 @@ description: 通过 draw.io MCP 生成、修改和校验 .drawio 图：open_draw
 
 工具清单随部署变化：**以当前会话实际提供的工具为准**。缺 `set_page` 时不要假装写入了文件；缺 `search_shapes` 时用已知 style（见 `references/xml-cookbook.md`）。
 
+## 1.5 选型与元素（先场景，后形状）
+
+**五问**：读者要做什么决定 → 讲结构还是行为 → 关注边界还是交互 → 要精确契约还是概念共识 → 15 个节点能否讲完。
+
+| 要回答 | 图种 | 元素组 |
+|---|---|---|
+| 系统在哪、和谁交互 | 上下文图、用例图 | 通用 + 软件 |
+| 由什么组成、怎么依赖 | 分层、C4、组件、类、ER、部署 | 软件 + 网络 |
+| 按什么顺序、什么状态 | 时序、状态机、活动、BPMN | 软件 + 流程图 |
+| 数据从哪来到哪去 | DFD、ER、血缘、管道 | 基本 + 软件 |
+| 谁负责、如何取舍 | 泳道、价值流、象限、鱼骨 | 商务 + 通用 |
+
+**元素三级可用性**：
+
+- **Tier A 已验证**：矩形、菱形、椭圆、`shape=cylinder3`、`shape=mxgraph.flowchart.document`、`swimlane`、`group`、`shape=table`、`shape=umlLifeline` —— 直接抄。
+- **Tier B 核心关键字**：`shape=hexagon`、`shape=manualInput`、`shape=actor`、`shape=component` 等 —— 写错会退化成矩形，**首次必须预览**；`examples/06-shape-smoke-test.drawio` 可一次看完 33 个。
+- **Tier C 品牌/库图标**：只能由 `search_shapes` 返回，**禁止手写猜名**；离线时降级为通用形状 + 文字，并在汇报中说明。
+
+**九组速记**：通用=骨架；基本=流程语义；箭头=方向强调；剪贴画=人/概念；流程图=业务步骤；软件=UML/ER/C4/DFD/BPMN；网络=部署/拓扑；商务=组织/决策；其他=行业专用。
+
+> 68 个软件工程场景的选型矩阵见 `references/scenarios.md`；形状、降级阶梯与使用规则见 `references/shape-libraries.md`。
+
 ## 2. 铁律
 
 1. **先写文件，再预览**。要交付就落盘 `.drawio`，预览只是最后一眼。
@@ -141,6 +163,8 @@ set_page(path, page, 新 model) → 复读 get_page 确认
 ## 参考
 
 - `references/xml-cookbook.md`：形状、容器、泳道、表格布局、层、标签、主题的可复制 XML
+- `references/shape-libraries.md`：九组元素的选择、Tier A/B/C、离线降级、上下文映射
+- `references/scenarios.md`：68 个软件工程场景 × 图种 × 元素 × 验收
 - `references/mermaid.md`：28 种图的选择、ELK 触发条件、样式与降级
 - `references/validation.md`：lint 规则、几何算法、预览与导出验收
 - `references/recipes.md`：流程图、架构图、ER、泳道、多页改写的完整骨架

@@ -2,6 +2,25 @@
 
 遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与语义化版本。
 
+## [0.2.0] - 2026-11-25
+
+### Added
+
+- `skills/drawio-mcp/references/shape-libraries.md`：九组元素（通用/基本/箭头/剪贴画/流程图/软件/网络/商务/其他）的选择指南、Tier A/B/C 三级可用性、上下文到元素的映射、离线降级阶梯。
+- `skills/drawio-mcp/references/scenarios.md`：68 个软件工程场景矩阵（需求、架构、设计、数据、流程、交付、质量安全、组织、决策），含选型五问、六套交付组合、反模式与快速路径。
+- `examples/06-shape-smoke-test.drawio`：38 个形状的目视冒烟测试（33 个 Tier B 核心关键字），用于确认哪些名称会退化成矩形。
+- `SKILL.md` 新增「1.5 选型与元素」：五问决策表、九组速记、三级可用性与指针。
+- `test/reference-contract.test.mjs`：场景 id 唯一性、三级策略、冒烟测试 lint、SKILL 指针的契约测试。
+
+### Changed
+
+- `docs/diagram/diagram-types.md` 增加软件工程场景矩阵入口。
+- README 补充选型路径与示例数量（6 个）。
+
+### Known
+
+- 各库 stencil 的具体名称未逐一验证；Tier B 需按冒烟测试目视确认（U13）。
+
 ## [0.1.0] - 2026-11-25
 
 ### Added

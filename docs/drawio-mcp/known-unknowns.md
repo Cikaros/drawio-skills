@@ -16,6 +16,7 @@
 | U10 | `open_drawio_*` 在非默认浏览器/无浏览器环境的行为 | 只观察到"已在默认浏览器打开" | 无 GUI 环境跑一次，记录返回 |
 | U11 | 手绘风 `sketch=1` 与主题色的叠加效果 | 未目视 | 导出对比 |
 | U12 | draw.io 对重复页 id 的实际处理 | lint 会拦，编辑器行为未测 | 造重复 id 文件，用编辑器打开 |
+| U13 | 各形状库 stencil 的具体名称与版本差异 | 未逐一目视；只把核心关键字列为 Tier B，品牌/行业图标列为 Tier C | 打开 `examples/06-shape-smoke-test.drawio` 逐格确认，把退化成矩形的项移出 Tier B；用 `search_shapes` 结果补充 Tier C 样例 |
 
 ## 维护规则
 

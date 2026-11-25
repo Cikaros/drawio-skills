@@ -1,0 +1,51 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { lintFile } from '../shared/drawio-lint.mjs';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
+
+test('scenario matrix covers every phase with unique ids', () => {
+  const text = read('skills/drawio-mcp/references/scenarios.md');
+  const ids = [...text.matchAll(/^\|\s*([A-I]\d{1,2})\s*\|/gm)].map((match) => match[1]);
+  assert.ok(ids.length >= 60, `expected at least 60 scenarios, found ${ids.length}`);
+  assert.equal(new Set(ids).size, ids.length, 'scenario ids must be unique');
+  for (const group of 'ABCDEFGHI') {
+    assert.ok(ids.some((id) => id.startsWith(group)), `group ${group} has no scenario`);
+  }
+});
+
+test('shape library reference keeps the three tiers and the no-guess rule', () => {
+  const text = read('skills/drawio-mcp/references/shape-libraries.md');
+  for (const token of [
+    'Tier A',
+    'Tier B',
+    'Tier C',
+    'search_shapes',
+    'shape=cylinder3',
+    'shape=umlLifeline',
+    'shape=mxgraph.flowchart.document',
+    '禁止手写猜名'
+  ]) {
+    assert.ok(text.includes(token), `missing token: ${token}`);
+  }
+});
+
+test('the smoke test example stays lint-clean and covers the Tier B set', () => {
+  const xml = read('examples/06-shape-smoke-test.drawio');
+  const result = lintFile(xml);
+  const errors = result.issues.filter((issue) => issue.severity === 'error');
+  assert.deepEqual(errors, []);
+  const shapes = (xml.match(/shape=/g) ?? []).length;
+  assert.ok(shapes >= 30, `expected at least 30 shape styles, found ${shapes}`);
+});
+
+test('SKILL.md points at the selection references', () => {
+  const text = read('skills/drawio-mcp/SKILL.md');
+  assert.ok(text.includes('references/scenarios.md'));
+  assert.ok(text.includes('references/shape-libraries.md'));
+  assert.ok(text.includes('examples/06-shape-smoke-test.drawio'));
+});

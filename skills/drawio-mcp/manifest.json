@@ -1,11 +1,11 @@
 {
   "name": "drawio-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "files": [
     {
       "path": "SKILL.md",
-      "bytes": 10022,
-      "sha256": "fbfaaee2f3e7bd634621494635c24b5581a0bc1d4e3ce9ad8a0efed7f3f93ff1"
+      "bytes": 12059,
+      "sha256": "ca4b0e335b3176869f2c7179bd04f5d1a89d261c01ea0f947dc173552abf5207"
     },
     {
       "path": "references/csv.md",
@@ -21,6 +21,16 @@
       "path": "references/recipes.md",
       "bytes": 7063,
       "sha256": "eb06c7a90ac43ee25bac6f754759e4184d165f709fd91c6fda198a734b155138"
+    },
+    {
+      "path": "references/scenarios.md",
+      "bytes": 13711,
+      "sha256": "3feb061a15ce6fb13df7c0d4a72f9bee45da350d00525e29688f00d088a914da"
+    },
+    {
+      "path": "references/shape-libraries.md",
+      "bytes": 10559,
+      "sha256": "582d58453c22ff55007c4b664eb9b4ea4c633cd04bd040ca725d287309f7be0d"
     },
     {
       "path": "references/validation.md",
