@@ -79,3 +79,51 @@ test('compressed pages are linted too, and comments are rejected at document lev
   assert.equal(result.pages[0].compressed, true);
   assert.equal(result.pages[0].issues.filter((issue) => issue.severity === 'error').length, 0);
 });
+
+const box = (id, x, y, w = 140, h = 60) => `<mxCell id="${id}" value="${id}" style="rounded=1;html=1;" vertex="1" parent="1"><mxGeometry x="${x}" y="${y}" width="${w}" height="${h}" as="geometry"/></mxCell>`;
+const edge = (id, source, target, style = '', points = []) => {
+  const array = points.length
+    ? `<Array as="points">${points.map((point) => `<mxPoint x="${point[0]}" y="${point[1]}"/>`).join('')}</Array>`
+    : '';
+  return `<mxCell id="${id}" style="edgeStyle=orthogonalEdgeStyle;html=1;${style}" edge="1" parent="1" source="${source}" target="${target}"><mxGeometry relative="1" as="geometry">${array}</mxGeometry></mxCell>`;
+};
+
+test('edges sharing a corridor are reported with their direction', () => {
+  const body = box('a', 40, 40) + box('b', 300, 40) + box('c', 40, 200)
+    + edge('e1', 'a', 'b', 'exitX=1;exitY=0.5;entryX=0;entryY=0.5;')
+    + edge('e2', 'b', 'c', 'exitX=0;exitY=0.5;entryX=0;entryY=0.5;', [[260, 70], [260, 230]]);
+  const issues = lintModelXml(body);
+  const hit = issues.find((issue) => issue.code === 'EDGE005');
+  assert.ok(hit);
+  assert.match(hit.message, /opposite directions/);
+  assert.match(hit.message, /40px/);
+});
+
+test('an edge that doubles back on itself is reported', () => {
+  const body = box('a', 40, 40) + box('b', 300, 40)
+    + edge('e1', 'a', 'b', 'exitX=1;exitY=0.5;entryX=0;entryY=0.5;', [[300, 70], [200, 70], [200, 150], [300, 150]]);
+  const issues = lintModelXml(body);
+  assert.ok(issues.some((issue) => issue.code === 'EDGE005' && /doubles back/.test(issue.message)));
+});
+
+test('an edge routed through an unrelated box is reported', () => {
+  const body = box('a', 40, 40) + box('b', 40, 300) + box('blocker', 200, 120)
+    + edge('e1', 'a', 'b', 'exitX=1;exitY=0.5;entryX=0.5;entryY=0;', [[270, 70], [270, 300]]);
+  const issues = lintModelXml(body);
+  assert.ok(issues.some((issue) => issue.code === 'EDGE006' && issue.message.includes('blocker')));
+});
+
+test('a line along a shape border is not treated as crossing it', () => {
+  const body = box('a', 40, 40) + box('b', 300, 40) + box('border', 200, 70, 60, 60)
+    + edge('e1', 'a', 'b', 'exitX=1;exitY=0.5;entryX=0;entryY=0.5;');
+  assert.equal(lintModelXml(body).filter((issue) => issue.code === 'EDGE006').length, 0);
+});
+
+test('sequence messages may cross lifelines and section text', () => {
+  const lifeline = (id, x) => `<mxCell id="${id}" value="${id}" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;" vertex="1" parent="1"><mxGeometry x="${x}" y="40" width="160" height="400" as="geometry"/></mxCell>`;
+  const body = lifeline('l1', 60) + lifeline('l3', 240) + lifeline('l2', 420)
+    + '<mxCell id="s" value="Section" style="text;html=1;" vertex="1" parent="1"><mxGeometry x="180" y="110" width="240" height="22" as="geometry"/></mxCell>'
+    + edge('m1', 'l1', 'l2', 'exitY=0.3;entryY=0.3;', [[300, 160], [300, 160]]);
+  const issues = lintModelXml(body);
+  assert.equal(issues.filter((issue) => issue.code === 'EDGE006').length, 0);
+});

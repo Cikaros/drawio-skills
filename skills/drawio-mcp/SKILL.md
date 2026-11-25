@@ -68,6 +68,7 @@ description: 通过 draw.io MCP 生成、修改和校验 .drawio 图：open_draw
 10. **一套图一个主题**。颜色按角色分配（步骤/判断/开始结束/错误/数据/外部），不要每个框一种颜色。
 11. **不发明形状**。需要行业图标时先 `search_shapes`；查不到就用基本形状 + 文字，别拼不存在的 style。
 12. **不谎报验收**。没看过预览/导出就说"静态校验通过，未做视觉确认"。
+13. **边不叠、不穿框**。多条边不共享同一条长走廊，更不允许对向箭头叠在一条线上；线不能穿过无关方块。`EDGE005/006` 报告时必须改锚点或 waypoint，不能靠预览器的临时避障。
 
 ## 3. 标准工作流（交付文件）
 
@@ -100,7 +101,7 @@ description: 通过 draw.io MCP 生成、修改和校验 .drawio 图：open_draw
 node scripts/validate-drawio.mjs --strict path/to/file.drawio
 ```
 
-零 error 且零 warning 才继续。警告也要看：`LAYOUT001`（重叠）、`LAYOUT002`（越界）、`EDGE004`（边挂错帧）都是真实视觉缺陷。
+零 error 且零 warning 才继续。警告也要看：`LAYOUT001`（重叠）、`LAYOUT002`（越界）、`EDGE004`（边挂错帧）、`EDGE005`（共享段/原路折返）、`EDGE006`（穿框）都是真实视觉缺陷。
 
 只安装了本技能、没有仓库时：按 `references/validation.md` 第 2 节的规则表逐条人工核对；能带上仓库的 `shared/` 与 `scripts/validate-drawio.mjs` 就用脚本。
 
@@ -140,7 +141,8 @@ set_page(path, page, 新 model) → 复读 get_page 确认
 | 文字里出现 `\n` | 用了字面反斜杠 n | 改 `<br>` 或 `&#xa;` |
 | 新节点压在一起 | 两个节点放了同一个网格单元 | 一节点一单元；跑 lint 看 `LAYOUT001` |
 | 子元素跑出泳道/容器 | 坐标当成了绝对坐标，或没让开 `startSize` | 相对父容器定位；`horizontal=0` 时 x ≥ startSize |
-| 线穿过方块 | draw.io 默认路由器不做避障 | 加 `routing:"libavoid"`，或调整节点位置 |
+| 线穿过方块 | draw.io 默认路由器不做避障 | 先跑 lint 看 `EDGE006`；加 `exit`/`entry` + 行间/列间 waypoint，或调整节点位置 |
+| 多条线叠成一条黑带，或同一条线出现相反箭头 | 多条边共用走廊/端口，或画了两条对向边 | 跑 lint 看 `EDGE005`；每条边独立锚点/走廊，双向关系合并成一条双边箭头 |
 | 图整体太挤 | 超过 ~20 节点仍在用原生布局 | `postLayout:"elk"`，或拆成多页 |
 | `search_shapes` 报 fetch failed | 默认索引 CDN 被阻断或本地无缓存 | 设 `DRAWIO_SHAPE_INDEX_URL` 指向镜像/本地文件，或预置缓存；仍失败再降级 |
 | `set_page` 后其它页没了 | 传了整份文件而不是单页 model | 传纯 `mxGraphModel`；必要时从备份恢复 |
@@ -152,6 +154,7 @@ set_page(path, page, 新 model) → 复读 get_page 确认
 - [ ] `validate-drawio.mjs --strict` 零 error；warning 已逐条判断
 - [ ] 每条边都有 source/target 与 `relative="1"` 的 geometry
 - [ ] 边挂在最内层公共容器上
+- [ ] 没有 `EDGE005`（共享段/折返）与 `EDGE006`（穿框）
 - [ ] 容器子元素坐标相对父级，且让开 `startSize`
 - [ ] 没有重叠节点、零尺寸节点、负尺寸
 - [ ] 含 HTML 的 label 都有 `html=1` 且已转义

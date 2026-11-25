@@ -2,6 +2,30 @@
 
 遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与语义化版本。
 
+## [0.4.0] - 2026-11-25
+
+### Added
+
+- `EDGE005`：两条边共享 >12px 同轴线段（区分同向/对向），以及单条边原路折返。
+- `EDGE006`：边穿过无关图形内部；按真实 `exitX/exitY`、`entryX/entryY` 与 waypoint 计算路径，跳过 source/target、`text` 分区标题、生命线与容器。
+- 5 项几何回归测试：共享走廊对向、单边折返、穿框、贴边不误报、时序消息穿生命线不误报。
+- `xml-cookbook.md` 4.1「端口与走廊」：独立端口、12px 走廊间距、扇出排序、双向边合并、贴边与穿框边界。
+
+### Changed
+
+- `references/validation.md`：规则表加入 `EDGE005/006`，第 3 节补边路径/共享段/穿框算法，5.1 改为「lint 已覆盖与仍需目检」。
+- `SKILL.md`：新增铁律 13「边不叠、不穿框」；失败速查、严格门禁与交付清单加入 `EDGE005/006`。
+- `docs/diagram/{layout,review-checklist}.md`、`references/sequences.md`：把共享段/穿框/端口分离写成验收项。
+- `examples/01-approval-flow.drawio`：`材料不全` 回边改走财务复核下方走廊，修掉与 `主管审批→财务复核` 的 40px 反向共享段和穿 `主管审批` 框。
+- `docs/drawio-mcp/cases/05-netbird-atlas.md`：补充第二轮边几何回写。
+- 版本升至 `0.4.0`；README lint 规则数更新为 29。
+
+### Validated
+
+- 外部项目 `netbird/docs/drawio`（不纳入本仓库提交）：17 页重新生成并导出 PNG；修正 01 扇出走廊顺序、03/07/12/17 同端口进出、03/11/17 穿 Store/ACL/告警框、01/16 分区标签压线。
+- `node scripts/validate-drawio.mjs --strict E:\Code\netbird\docs\drawio\*.drawio`：17/17，0 error / 0 warning；新增规则下仍为零告警。
+- `npm run verify`：46/46 通过；8 个示例 `--strict` 零告警。
+
 ## [0.3.1] - 2026-11-25
 
 ### Added

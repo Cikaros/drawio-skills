@@ -11,7 +11,8 @@ draw.io MCP 是"编辑器的遥控器"，不是"文件生成器"：
 - `open_drawio_xml` / `open_drawio_mermaid` / `open_drawio_csv` **只返回编辑器 URL，不落盘**；
 - `open_drawio_xml` **不校验 XML**——畸形 XML 同样返回 URL；
 - 读写本地文件只有 `list_pages` / `get_page` / `set_page`，且**不能新建文件**；
-- 边必须有 `<mxGeometry relative="1"/>`，容器子元素坐标是相对的，标签开 `html=1` 还要求 XML 转义。
+- 边必须有 `<mxGeometry relative="1"/>`，容器子元素坐标是相对的，标签开 `html=1` 还要求 XML 转义；
+- 两条边共享同一段线、或一条线穿过无关方块，XML 都合法但读者会误读；本仓库用 `EDGE005/006` 做几何检查。
 
 这些结论在本仓库里都有实测记录（`docs/drawio-mcp/pitfalls.md`），并固化成了技能、校验器和示例。
 
@@ -42,7 +43,7 @@ skills/
 shared/
   xml-parse.mjs              零依赖 XML 解析
   drawio-file.mjs            mxfile、压缩页、多页读写
-  drawio-lint.mjs            27 条渲染缺陷规则
+  drawio-lint.mjs            29 条渲染缺陷规则（含边共享段/穿框）
   drawio-guards.mjs          网格、角色色、标签、边模板
 scripts/
   validate-drawio.mjs        命令行校验器（--strict / --json）

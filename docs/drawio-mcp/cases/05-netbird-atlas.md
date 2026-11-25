@@ -41,9 +41,9 @@
 
 1. 盘点事实源，列出 17 个问题。
 2. 写一个本地 DSL（node + 仓库的 `shared/drawio-file.mjs`）生成 `mxCell`，统一配色、图例、页脚。
-3. 每批生成后跑 `validate-drawio.mjs --strict`，按 `LAYOUT001` 修正分区标签/节点重叠。
+3. 每批生成后跑 `validate-drawio.mjs --strict`，先修 `LAYOUT001`（节点/分区标签重叠）与 `EDGE005/006`（边共享段、原路折返、穿框）。
 4. 用 draw.io 桌面 CLI 批量导出 PNG 做视觉回归：`draw.io -x -f png --size page -o <out>.png <in>.drawio`。
-5. 按 PNG 逐个修正：删掉穿框的长边、给跨行列边补 `exitX/exitY` + `entryX/entryY`、把 waypoint 放进行间走廊；密集页删除边标签，语义留在节点副标题/图例。
+5. 按 PNG 逐个修正：删掉穿框的长边、给跨行列边补 `exitX/exitY` + `entryX/entryY`，同一形状的出入边分端口，waypoint 放进行间/列间走廊；扇出边按目标顺序排走廊；密集页删除边标签，语义留在节点副标题/图例。
 6. 生成 `docs/drawio/README.md` 索引，按角色给出阅读顺序。
 7. 把缺口回写到 skill：`sequences.md`、`xml-cookbook.md` 的 ER 小节、`scenarios.md` 的 Atlas 工作流、`examples/07`、`validation.md` 的导出与锚点小节。
 
@@ -54,21 +54,23 @@
 | 没有 XML 时序图配方 | 生命线锚点靠试；消息会吸到生命线顶部 | `references/sequences.md` + `examples/07` |
 | ER 只有 Mermaid/表格，没有实体盒 + crow's foot | 容易把 ER 画成 `shape=table` 网格 | `xml-cookbook.md` 6.5 |
 | 没有“真实项目图集”流程 | 单图技巧够，但不知道先盘点什么、如何命名/索引 | `scenarios.md` 第 8 节 |
-| 静态 lint 不查视觉 | 交叉、标签遮挡、线穿框全部 lint 通过 | `validation.md` 5.1 + 本案例 |
+| 静态 lint 不查视觉 | 标签遮挡、箭头语义、页面留白仍需目检 | `validation.md` 5.1；边共享段/穿框已由 `EDGE005/006` 覆盖 |
 | 正交边缺少锚点写法 | 只给 waypoint，首段仍从中心出发穿框 | `validation.md` 5.1；DSL 增加 `exit`/`entry` |
+| 端口挤在一起 | 多条边共用同一锚点，出现同向/反向叠线 | 不同 `exitY/entryY` 或不同边；`EDGE005` 复跑 |
 | 自动布局看似省事但破坏语义 | `--layout` 把控制面/数据面重排成一张网 | 明确禁用；只对纯流程图用 |
 
 ## 视觉回归结果
 
 - 环境：draw.io 桌面 CLI 32.7.4，`-x -f png --size page` 导出全部 17 页。
 - 发现并修正：01 长边与标签拥挤、03 Agent→Signal 穿 Terraform、04 NetworkMap 长边穿 Policy、05 Conn→Relay 穿 Route、06 用户→Management 穿 DNS、07 Relay/Turn 箭头指错列、08 Rule→Group 穿 GROUP_PEER、13 消息密度、14 标签压线、15 Gate 文字溢出。
-- 采用手法：删不可读长边；跨行列边补 `exit`/`entry` 锚点；waypoint 移到行间/列间；密集页去边标签；时序页重排为 6 条生命线、14 条消息。
+- 采用手法：删不可读长边；跨行列边补 `exit`/`entry` 锚点；waypoint 移到行间/列间；同一形状的出入边分端口；密集页去边标签；时序页重排为 6 条生命线、14 条消息。
 - 复核：修改后重新导出 PNG 逐页检查；全量 `--strict` 仍为 0 error / 0 warning。
+- 第二轮（新增 `EDGE005/006` 后）：01 的 Agent 扇出改成单调走廊（近目标上、远目标下）；03 的 Management 端口分出 IaC/Agent/Obs；07/12 拆开同端口进出；03/11/17 绕开 Store/ACL/告警框；01/16 的分区标签移出线束。17 页重新导出，`--strict` 17/17 零告警。
 
 ## 验收
 
 - `netbird/docs/drawio`：17 个 `.drawio` + `README.md`。
 - `validate-drawio.mjs --strict`：17/17，0 error / 0 warning。
-- 视觉：17 页全部导出 PNG；重点页（01/03/04/05/06/07/08/13/14/15）逐页复核，剩余页为抽检。
-- drawio-skills：新增 1 篇参考、1 个示例、1 个案例、3 个契约测试；`npm run verify` 41/41。
+- 视觉：17 页全部导出 PNG；01/03/07/11/12/16/17 在最后一轮重新复核，其余页沿用前轮结果。
+- drawio-skills：新增 2 条边几何规则（`EDGE005/006`）与 5 项回归测试；`npm run verify` 46/46。
 - 未做：逐页人工签字确认；品牌/行业图标改走通用形状；Tier C 已在 `examples/08-tier-c-icons.drawio` 单独验证 10 个代表图标，但未回填 NetBird 图集。

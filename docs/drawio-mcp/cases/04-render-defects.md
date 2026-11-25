@@ -14,6 +14,7 @@
 | 3 | 边有没有 geometry | `EDGE001` |
 | 4 | source/target 是否存在 | `EDGE002` |
 | 5 | label 是否含 HTML | 看 `value` 与 style 的 `html=1` |
+| 6 | 线是否穿过方块/共用长段 | `EDGE005` / `EDGE006`；看 `exitX/exitY`、`entryX/entryY` 与 waypoint |
 
 ## 根因 A：边被写成自闭合
 

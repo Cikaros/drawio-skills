@@ -92,7 +92,31 @@
 
 标签：写在 `value` 上；`labelBackgroundColor=#FFFFFF`（或 `default`）让文字截断线条。1–3 个词，别写句子。
 
-连接点：**不要手写** `exitX/exitY/entryX/entryY`，也不要加 `<Array as="points">`；除非你有明确几何意图。
+连接点：默认不写 `exitX/exitY/entryX/entryY`，也不加 `<Array as="points">`；一旦出现 `EDGE005`（共享段/折返）或 `EDGE006`（穿框），就必须显式写锚点与走廊。
+
+### 4.1 端口与走廊
+
+```xml
+<mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#5A626E;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="a" target="b">
+  <mxGeometry relative="1" as="geometry">
+    <Array as="points">
+      <mxPoint x="540" y="290"/>
+      <mxPoint x="540" y="430"/>
+    </Array>
+  </mxGeometry>
+</mxCell>
+```
+
+规则：
+
+- **端口分开**：同一形状的多条边用不同的 `exitY`/`entryY`（如 `0.25`、`0.5`、`0.75`）或不同边；不要一条进、一条出共用同一点，否则两个反向箭头会叠成一条线（`EDGE005`）。
+- **走廊分开**：每条边占独立的水平/垂直走廊，间距至少 12px；两条边不要共享同一 y/x 的长段。
+- **扇出排序**：从同一源扇出到同一行多个目标时，按目标从左到右把走廊从近到远排列（近目标走上侧走廊），避免每条边的落点竖线被外侧走廊横穿。
+- **双向关系**：用一条 `startArrow=block;endArrow=block;` 的边并标“双向”，不要画两条完全重合、方向相反的边。
+- **不穿框**：waypoint 放在行间/列间；线擦着边框可以，进入方块内部就是 `EDGE006`。
+- **不穿标签**：lint 只把 `text` 分区标题当背景，不检测普通文字；走廊仍要避开标题、图例和 note。
+
+> 本仓库的 `EDGE005` 会把同一条边原路折返也算作共享段；`EDGE006` 会跳过 source/target、`text` 分区标题、生命线与容器。
 
 ## 5. 容器与泳道
 

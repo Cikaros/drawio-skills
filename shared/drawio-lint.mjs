@@ -35,6 +35,11 @@ function cellFromNode(node) {
   const inner = isWrapper ? node.children.find((child) => child.name === 'mxCell') : node;
   if (!inner) return null;
   const geometry = inner.children?.find((child) => child.name === 'mxGeometry') ?? null;
+  const points = [];
+  const pointArray = geometry?.children?.find((child) => child.name === 'Array' && child.attrs.as === 'points');
+  for (const point of pointArray?.children ?? []) {
+    if (point.name === 'mxPoint') points.push({ x: num(point.attrs.x), y: num(point.attrs.y) });
+  }
   const style = inner.attrs.style ?? node.attrs.style ?? '';
   return {
     id: isWrapper ? node.attrs.id : inner.attrs.id,
@@ -51,6 +56,7 @@ function cellFromNode(node) {
     wrapper: isWrapper,
     geometryNode: geometry,
     relative: geometry ? geometry.attrs.relative === '1' : false,
+    points,
     x: geometry ? num(geometry.attrs.x) : 0,
     y: geometry ? num(geometry.attrs.y) : 0,
     width: geometry ? num(geometry.attrs.width) : 0,
@@ -95,6 +101,130 @@ function isContainer(cell) {
   if (!cell.vertex) return false;
   const style = cell.styleMap;
   return SWIMLANE in style || style[CONTAINER] === '1' || cell.style.trim() === 'group' || cell.style.includes('group;');
+}
+
+// Edges are routed in page coordinates. Child cells and waypoints may be
+// relative to a container, so resolve the absolute offset before geometry
+// checks. Layers (parent="1") contribute no offset.
+function absolutePosition(cell, index, seen = new Set()) {
+  if (!cell) return { x: 0, y: 0 };
+  if (seen.has(cell.id)) return { x: cell.x, y: cell.y };
+  seen.add(cell.id);
+  const parent = index.get(cell.parent);
+  if (!parent || cell.parent === '0' || !parent.vertex) return { x: cell.x, y: cell.y };
+  const origin = absolutePosition(parent, index, seen);
+  return { x: origin.x + cell.x, y: origin.y + cell.y };
+}
+
+function absoluteBox(cell, index) {
+  const position = absolutePosition(cell, index);
+  return { x: position.x, y: position.y, width: cell.width, height: cell.height };
+}
+
+function isObstacle(cell) {
+  if (!cell.vertex || !cell.geometryNode || isContainer(cell)) return false;
+  const style = cell.styleMap;
+  if (style.text === '1' || cell.style.trim() === 'text') return false;
+  if (style.shape === 'umlLifeline' || style.perimeter === 'lifelinePerimeter') return false;
+  return true;
+}
+
+function edgeRoute(edge, index) {
+  const points = [];
+  const source = index.get(edge.source);
+  const target = index.get(edge.target);
+  if (source) {
+    const box = absoluteBox(source, index);
+    points.push({
+      x: box.x + box.width * num(edge.styleMap.exitX, 0.5),
+      y: box.y + box.height * num(edge.styleMap.exitY, 0.5)
+    });
+  }
+  const parent = index.get(edge.parent);
+  const offset = parent && parent.vertex ? absolutePosition(parent, index) : { x: 0, y: 0 };
+  points.push(...edge.points.map((point) => ({ x: point.x + offset.x, y: point.y + offset.y })));
+  if (target) {
+    const box = absoluteBox(target, index);
+    points.push({
+      x: box.x + box.width * num(edge.styleMap.entryX, 0.5),
+      y: box.y + box.height * num(edge.styleMap.entryY, 0.5)
+    });
+  }
+  const trimmed = points.filter((point, i) => i === 0 || point.x !== points[i - 1].x || point.y !== points[i - 1].y);
+  if (source && !('exitX' in edge.styleMap) && !('exitY' in edge.styleMap) && trimmed.length > 1) {
+    trimmed[0] = borderPoint(trimmed[0], trimmed[1], absoluteBox(source, index));
+  }
+  if (target && !('entryX' in edge.styleMap) && !('entryY' in edge.styleMap) && trimmed.length > 1) {
+    trimmed[trimmed.length - 1] = borderPoint(trimmed[trimmed.length - 1], trimmed[trimmed.length - 2], absoluteBox(target, index));
+  }
+  return trimmed.filter((point, i) => i === 0 || point.x !== trimmed[i - 1].x || point.y !== trimmed[i - 1].y);
+}
+
+function axisOf(segment) {
+  if (Math.abs(segment.a.x - segment.b.x) < 0.5) return 'v';
+  if (Math.abs(segment.a.y - segment.b.y) < 0.5) return 'h';
+  return null;
+}
+
+function segmentOverlap(first, second) {
+  const axis = axisOf(first);
+  if (!axis || axis !== axisOf(second)) return 0;
+  if (axis === 'h' && Math.abs(first.a.y - second.a.y) < 0.5) {
+    return Math.max(0, Math.min(Math.max(first.a.x, first.b.x), Math.max(second.a.x, second.b.x))
+      - Math.max(Math.min(first.a.x, first.b.x), Math.min(second.a.x, second.b.x)));
+  }
+  if (axis === 'v' && Math.abs(first.a.x - second.a.x) < 0.5) {
+    return Math.max(0, Math.min(Math.max(first.a.y, first.b.y), Math.max(second.a.y, second.b.y))
+      - Math.max(Math.min(first.a.y, first.b.y), Math.min(second.a.y, second.b.y)));
+  }
+  return 0;
+}
+
+// Liang-Barsky clip: true when the segment passes through the interior of the
+// rectangle. A line running exactly along a border does not count.
+function segmentHitsBox(segment, box, inset = 1.5) {
+  const left = box.x + inset;
+  const right = box.x + box.width - inset;
+  const top = box.y + inset;
+  const bottom = box.y + box.height - inset;
+  if (right <= left || bottom <= top) return false;
+  const dx = segment.b.x - segment.a.x;
+  const dy = segment.b.y - segment.a.y;
+  const p = [-dx, dx, -dy, dy];
+  const q = [segment.a.x - left, right - segment.a.x, segment.a.y - top, bottom - segment.a.y];
+  let t0 = 0;
+  let t1 = 1;
+  for (let i = 0; i < 4; i += 1) {
+    if (Math.abs(p[i]) < 1e-9) {
+      if (q[i] < 0) return false;
+      continue;
+    }
+    const r = q[i] / p[i];
+    if (p[i] < 0) t0 = Math.max(t0, r);
+    else t1 = Math.min(t1, r);
+    if (t0 > t1) return false;
+  }
+  return true;
+}
+
+function borderPoint(center, toward, box) {
+  const dx = toward.x - center.x;
+  const dy = toward.y - center.y;
+  if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return center;
+  let t = Infinity;
+  if (dx > 0) t = Math.min(t, (box.x + box.width - center.x) / dx);
+  if (dx < 0) t = Math.min(t, (box.x - center.x) / dx);
+  if (dy > 0) t = Math.min(t, (box.y + box.height - center.y) / dy);
+  if (dy < 0) t = Math.min(t, (box.y - center.y) / dy);
+  if (!Number.isFinite(t) || t <= 0 || t > 1) return center;
+  return { x: center.x + dx * t, y: center.y + dy * t };
+}
+
+function directionSign(first, second) {
+  const axis = axisOf(first);
+  if (!axis || axis !== axisOf(second)) return 0;
+  const delta = (segment) => axis === 'h' ? segment.b.x - segment.a.x : segment.b.y - segment.a.y;
+  return Math.sign(delta(first)) * Math.sign(delta(second));
 }
 
 function intersects(a, b, tolerance = 2) {
@@ -250,6 +380,76 @@ export function lintModel(model, options = {}) {
         const b = group[j];
         if (intersects(a, b)) {
           add('LAYOUT001', 'warn', `shapes "${a.id}" and "${b.id}" overlap in the same parent`, a.id);
+        }
+      }
+    }
+  }
+
+  // Edge geometry checks. These catch the two failure modes that make a
+  // diagram unreadable without breaking XML: several connectors sharing one
+  // visual line (especially in opposite directions) and a connector routed
+  // straight through an unrelated box.
+  const routed = [];
+  for (const cell of cells) {
+    if (!cell.edge || !cell.geometryNode) continue;
+    const path = edgeRoute(cell, index);
+    if (path.length < 2) continue;
+    const segments = path.slice(1).map((point, i) => ({ a: path[i], b: point }));
+    routed.push({ cell, segments });
+  }
+
+  const overlapThreshold = 12;
+  const reportedPairs = new Set();
+  for (const route of routed) {
+    if (route.cell.source === route.cell.target) continue;
+    let doubled = false;
+    for (let i = 0; i < route.segments.length && !doubled; i += 1) {
+      for (let j = i + 1; j < route.segments.length; j += 1) {
+        const length = segmentOverlap(route.segments[i], route.segments[j]);
+        if (length > overlapThreshold) {
+          add('EDGE005', 'warn', `edge "${route.cell.id}" doubles back on a ${Math.round(length)}px segment; separate the outbound and return corridors`, route.cell.id);
+          doubled = true;
+          break;
+        }
+      }
+    }
+  }
+
+  for (let i = 0; i < routed.length; i += 1) {
+    for (let j = i + 1; j < routed.length; j += 1) {
+      const first = routed[i];
+      const second = routed[j];
+      const key = [first.cell.id, second.cell.id].sort().join('|');
+      if (reportedPairs.has(key)) continue;
+      let best = 0;
+      let opposite = false;
+      for (const a of first.segments) {
+        for (const b of second.segments) {
+          const length = segmentOverlap(a, b);
+          if (length > best) {
+            best = length;
+            opposite = directionSign(a, b) < 0;
+          }
+        }
+      }
+      if (best > overlapThreshold) {
+        reportedPairs.add(key);
+        const direction = opposite ? 'in opposite directions' : 'in the same direction';
+        add('EDGE005', 'warn', `edges "${first.cell.id}" and "${second.cell.id}" share a ${Math.round(best)}px segment ${direction}; give each edge its own corridor or ports`, first.cell.id);
+      }
+    }
+  }
+
+  const obstacles = cells.filter(isObstacle);
+  for (const route of routed) {
+    const crossed = new Set();
+    for (const segment of route.segments) {
+      for (const vertex of obstacles) {
+        if (vertex.id === route.cell.source || vertex.id === route.cell.target) continue;
+        if (crossed.has(vertex.id)) continue;
+        if (segmentHitsBox(segment, absoluteBox(vertex, index))) {
+          crossed.add(vertex.id);
+          add('EDGE006', 'warn', `edge "${route.cell.id}" crosses shape "${vertex.id}"; route around it or attach to it`, route.cell.id);
         }
       }
     }
